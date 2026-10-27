@@ -2612,8 +2612,8 @@ function mathify(escapedHtml){
   // 拆出 <mark> 标签，只对纯文本片段做公式识别
   return escapedHtml.split(/(<mark[^>]*>|<\/mark>)/).map(seg=>{
     if(!seg || seg.startsWith("<mark")) return seg;
-    // 公式候选片段：连续的「非中文」字符（空格、□、希腊字母、上下标、各种数学符号都算，中文自然截断）
-    return seg.replace(/[^\u4e00-\u9fff\u3000-\u303f\uff00-\uffef\u201c\u201d\u2018\u2019\u2026\u2014\n]+/g, run=>{
+    // 公式候选片段：连续的「非中文」字符（空格、□、希腊字母、上下标、省略号、破折号都算，中文自然截断）
+    return seg.replace(/[^\u4e00-\u9fff\u3000-\u303f\uff00-\uffef\u201c\u201d\u2018\u2019\n]+/g, run=>{
       // 至少含一个公式特征符才认定为公式，普通英文单词原样保留
       if(!/[=^_√∑∫∇∆∏≤≥≠≈→←↔∈∋⇒⇔↦∀∃|−·×÷′]/.test(run)) return run;
       const lead = run.match(/^\s*/)[0], trail = run.match(/\s*$/)[0];
@@ -2628,14 +2628,21 @@ function mathify(escapedHtml){
       // 统一占位符保护：成对元素整体保护（sub/sup 含内容）+ 单个标签 + HTML 实体
       const tags = [];
       r = r.replace(/(<sub>[\s\S]*?<\/sub>|<sup>[\s\S]*?<\/sup>|&[a-zA-Z]+;|&#[0-9]+;|<[^>]+>)/g, m=>{ tags.push(m); return "\x00" + (tags.length-1) + "\x00"; });
-      // 分式：A/B → 上下堆叠（支持一层括号嵌套）；(a/b) 整组括号直接转分式
-      const TOK = "(?:\\x00\\d+\\x00|[A-Za-z0-9\\u2070-\\u209F\\u00B2\\u00B3\\u00B9!])+";
+      // 分式：一切 A/B → 上下堆叠（括号组、方括号组、简单式子全覆盖）
+      const GRP = "\\((?:[^()]|\\([^()]*\\))*\\)";                    // 一层圆括号组（内容可含加减/空格/斜杠）
+      const BRKIN = "(?:[^\\[\\]]|\\([^()]*\\))*";                    // 方括号组内容
+      const BRK = "\\[" + BRKIN + "\\]";                              // 一层方括号组
+      const SIMP = "(?:\\x00\\d+\\x00|[A-Za-z0-9\\u2070-\\u209F\\u00B2\\u00B3\\u00B9!±∞√π\\u0391-\\u03C9\\u2032·×])+";  // 简单式（无空格无加减，可含下标占位）
+      const DENG = "(?:√)?" + GRP;                                    // 带可选 √ 前缀的括号组
       const frac = (a,b)=>{ tags.push('<span class="frac"><span class="num">'+a+'</span><span class="den">'+b+'</span></span>'); return "\x00" + (tags.length-1) + "\x00"; };
-      r = r.replace(/\(([^()/]+)\/([^()/]+)\)/g, (_,a,b)=>frac(a,b));
-      r = r.replace(/\(((?:[^()]|\([^()]*\))+)\)\/\(((?:[^()]|\([^()]*\))+)\)/g, (_,a,b)=>frac(a,b));
-      r = r.replace(new RegExp("((?:"+TOK+"))/\\(((?:[^()]|\\([^()]*\\))+)\\)", "g"), (_,a,b)=>frac(a,b));
-      r = r.replace(new RegExp("\\(((?:[^()]|\\([^()]*\\))+)\\)/((?:"+TOK+"))", "g"), (_,a,b)=>frac(a,b));
-      r = r.replace(new RegExp("("+TOK+")/("+TOK+")", "g"), (_,a,b)=>frac(a,b));
+      const strip = t => t.replace(/^\(([\s\S]*)\)$/, "$1");   // 括号组转分式时剥掉外层括号
+      r = r.replace(new RegExp("\\(([^()/]+)/([^()/]+)\\)", "g"), (_,a,b)=>frac(a,b));          // (a/b) 整组
+      r = r.replace(new RegExp("(" + GRP + ")/(" + DENG + ")", "g"), (_,a,b)=>frac(strip(a), strip(b)));       // (组)/(√组)
+      r = r.replace(new RegExp("(" + SIMP + ")/(" + DENG + ")", "g"), (_,a,b)=>frac(a, strip(b)));      // 简/(√组)
+      r = r.replace(new RegExp("(" + GRP + ")/(" + SIMP + ")", "g"), (_,a,b)=>frac(strip(a), b));      // (组)/简
+      r = r.replace(new RegExp("\\[(" + BRKIN + ")]/(" + DENG + "|" + SIMP + ")", "g"), (_,a,b)=>frac(a,b));  // [组]/…
+      r = r.replace(new RegExp("(" + SIMP + ")/((?:√)?\\[[^\\[\\]]+\\](?:\\{[^{}]*\\})?)", "g"), (_,a,b)=>frac(a,b));  // 简/√[n]{aₙ}
+      r = r.replace(new RegExp("(" + SIMP + ")/(" + SIMP + ")", "g"), (_,a,b)=>frac(a,b));    // 简/简
       // 函数名/极限号正体（书面规范）
       r = r.replace(/\b(lim|sin|cos|tan|cot|sec|csc|log|ln|max|min|arcsin|arccos|arctan|sup|inf)\b/g, m=>{ tags.push('<span class="up">'+m+'</span>'); return "\x00" + (tags.length-1) + "\x00"; });
       // 编程/英文常用词保持正体（防止代码型文本被整段斜体）

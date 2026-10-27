@@ -3014,6 +3014,7 @@ function refreshLesson(lid, keepScroll){
   const st = keepScroll ? window.scrollY : 0;
   wrap.innerHTML = renderBlocksHTML(f.course, f.lesson, lid);
   if(keepScroll) window.scrollTo(0, st);
+  sizeCanvas();   // 内容高度变了：重测画布并只重绘当前页的笔迹
 }
 
 /* ================================================================

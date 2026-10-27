@@ -1,0 +1,16 @@
+{
+  "name": "learninglist-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "mklnk.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@recent-cli/resolve-lnk": "^0.0.2",
+    "windows-shortcuts": "^0.1.6"
+  }
+}

@@ -273,6 +273,28 @@
   .math i{font-style:italic;}   /* 变量斜体 */
   .math .up{font-style:normal; letter-spacing:.03em;}   /* 函数名正体 */
   .math sup, .math sub{font-style:normal; font-size:.72em;}
+  /* 分式：上下堆叠 */
+  .math .frac{
+    display:inline-flex; flex-direction:column; align-items:center;
+    vertical-align:-0.55em; margin:0 3px; font-size:.88em; line-height:1.25;
+  }
+  .math .frac .num{border-bottom:1.5px solid currentColor; padding:0 5px 1px;}
+  .math .frac .den{padding:1px 5px 0;}
+  /* 证明块 */
+  .b-quiz.proof{background:#f8fafc; border-color:#cbd5e1;}
+  .b-quiz.proof .q{color:#334155;}
+  .b-quiz.proof .reveal-btn{border-color:#64748b; color:#334155;}
+  .b-quiz.proof .reveal-btn:hover{background:#e2e8f0;}
+  .b-quiz.proof .a{color:#1f2937; background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:14px 18px;}
+  .b-quiz.proof .step{display:flex; gap:9px; padding:4px 0;}
+  .b-quiz.proof .step .sn{
+    flex:none; width:22px; height:22px; border-radius:50%; margin-top:3px;
+    background:#475569; color:#fff; font-size:12px;
+    display:inline-flex; align-items:center; justify-content:center;
+  }
+  /* 我的补充 · 图片 */
+  .extra-img{max-width:100%; border-radius:10px; border:1px solid var(--line); margin-top:8px; display:block;}
+  .extra-img-btn{align-self:stretch;}
   @media (max-width:640px){ .main{padding:18px 12px 60px;} }
 </style>
 </head>
@@ -423,7 +445,7 @@ const COURSE_DATA = [
       {
        "t": "concept",
        "title": "邻域",
-       "x": "U(x0, δ) = {x | |x−x0| < δ}，即开区间 (x0−δ, x0+δ)；去心邻域 Ů(x0, δ) 是 0 < |x−x0| < δ（不含 x0 本身）。极限里写 x→x0 用的正是去心邻域：与函数在 x0 处有没有定义无关。"
+       "x": "U(x₀, δ) = {x | |x−x₀| < δ}，即开区间 (x₀−δ, x₀+δ)；去心邻域 Ů(x₀, δ) 是 0 < |x−x₀| < δ（不含 x₀ 本身）。极限里写 x→x₀ 用的正是去心邻域：与函数在 x₀ 处有没有定义无关。"
       },
       {
        "t": "concept",
@@ -624,13 +646,13 @@ const COURSE_DATA = [
       },
       {
        "t": "concept",
-       "title": "x→x0 的定义",
-       "x": "∀ε>0，∃δ>0，当 0 < |x−x0| < δ 时 |f(x) − A| < ε。注意 0 < |x−x0| 表示不含 x0：极限与 f 在 x0 处有无定义、取值多少都无关。"
+       "title": "x→x₀ 的定义",
+       "x": "∀ε>0，∃δ>0，当 0 < |x−x₀| < δ 时 |f(x) − A| < ε。注意 0 < |x−x₀| 表示不含 x₀：极限与 f 在 x₀ 处有无定义、取值多少都无关。"
       },
       {
        "t": "list",
        "items": [
-        "六种极限过程：x→∞、+∞、−∞、x0、x0⁻、x0⁺",
+        "六种极限过程：x→∞、+∞、−∞、x₀、x₀⁻、x₀⁺",
         "同一函数在不同过程下极限可以不同，做题先认清「谁趋于谁」"
        ]
       },
@@ -664,12 +686,12 @@ const COURSE_DATA = [
       {
        "t": "concept",
        "title": "极限存在的充要条件",
-       "x": "lim_{x→x0} f(x) = A ⟺ 左极限 lim_{x→x0⁻} 与右极限 lim_{x→x0⁺} 都存在且相等。分段函数分界点、含 |x−x0| 的表达式必查左右。"
+       "x": "lim_{x→x₀} f(x) = A ⟺ 左极限 lim_{x→x₀⁻} 与右极限 lim_{x→x₀⁺} 都存在且相等。分段函数分界点、含 |x−x₀| 的表达式必查左右。"
       },
       {
        "t": "list",
        "items": [
-        "必须分左右讨论的常客：|x − x0|、x→0 时的 1/x、e^{1/x}、arctan(1/x)、分段函数分界点",
+        "必须分左右讨论的常客：|x − x₀|、x→0 时的 1/x、e^{1/x}、arctan(1/x)、分段函数分界点",
         "例：lim_{x→0} e^{1/x}：x→0⁺ 时 → +∞；x→0⁻ 时 → 0。左右不一致 ⇒ 极限不存在"
        ]
       },
@@ -923,7 +945,7 @@ const COURSE_DATA = [
       {
        "t": "concept",
        "title": "连续的定义",
-       "x": "x0 处连续三要素：f(x0) 有定义；lim_{x→x0} f(x) 存在；两者相等。增量形式：lim_{Δx→0} Δy = 0。"
+       "x": "x₀ 处连续三要素：f(x₀) 有定义；lim_{x→x₀} f(x) 存在；两者相等。增量形式：lim_{Δx→0} Δy = 0。"
       },
       {
        "t": "concept",
@@ -978,7 +1000,7 @@ const COURSE_DATA = [
       {
        "t": "concept",
        "title": "复合函数极限",
-       "x": "lim_{x→x0} f(g(x)) = f(lim_{x→x0} g(x))——极限符号可以「钻进」连续函数内部。求极限利器：先算内部的极限，再代外层。"
+       "x": "lim_{x→x₀} f(g(x)) = f(lim_{x→x₀} g(x))——极限符号可以「钻进」连续函数内部。求极限利器：先算内部的极限，再代外层。"
       },
       {
        "t": "concept",
@@ -1063,12 +1085,12 @@ const COURSE_DATA = [
       {
        "t": "concept",
        "title": "导数定义",
-       "x": "f′(x0) = lim_{Δx→0} [f(x0+Δx) − f(x0)]/Δx = lim_{x→x0} [f(x) − f(x0)]/(x − x0)。本质：函数在一点的瞬时变化率。"
+       "x": "f′(x₀) = lim_{Δx→0} [f(x₀+Δx) − f(x₀)]/Δx = lim_{x→x₀} [f(x) − f(x₀)]/(x − x₀)。本质：函数在一点的瞬时变化率。"
       },
       {
        "t": "concept",
        "title": "几何意义",
-       "x": "f′(x0) 是曲线在 (x0, f(x0)) 处切线的斜率。切线：y − f(x0) = f′(x0)(x − x0)；法线斜率：−1/f′(x0)（f′(x0)≠0 时）。"
+       "x": "f′(x₀) 是曲线在 (x₀, f(x₀)) 处切线的斜率。切线：y − f(x₀) = f′(x₀)(x − x₀)；法线斜率：−1/f′(x₀)（f′(x₀)≠0 时）。"
       },
       {
        "t": "concept",
@@ -1078,7 +1100,7 @@ const COURSE_DATA = [
       {
        "t": "list",
        "items": [
-        "f′(x0) 存在 ⟺ 左导数、右导数都存在且相等",
+        "f′(x₀) 存在 ⟺ 左导数、右导数都存在且相等",
         "分段函数分界点、含绝对值的点：必须回到定义求左右导数",
         "经典结论：f(x) = |x−a| 在 a 处连续不可导；(x−a)|x−a| 在 a 处可导"
        ]
@@ -1251,12 +1273,12 @@ const COURSE_DATA = [
       {
        "t": "concept",
        "title": "微分的定义",
-       "x": "若 Δy = A·Δx + o(Δx)，称 f 在 x0 可微，线性主部 A·Δx 叫微分：dy = f′(x0)dx。核心结论：一元函数可微 ⟺ 可导。"
+       "x": "若 Δy = A·Δx + o(Δx)，称 f 在 x₀ 可微，线性主部 A·Δx 叫微分：dy = f′(x₀)dx。核心结论：一元函数可微 ⟺ 可导。"
       },
       {
        "t": "concept",
        "title": "近似计算",
-       "x": "Δy ≈ dy ⇒ f(x0 + Δx) ≈ f(x0) + f′(x0)·Δx。例：√4.02 ≈ 2 + (1/4)·0.02 = 2.005。"
+       "x": "Δy ≈ dy ⇒ f(x₀ + Δx) ≈ f(x₀) + f′(x₀)·Δx。例：√4.02 ≈ 2 + (1/4)·0.02 = 2.005。"
       },
       {
        "t": "concept",
@@ -1396,7 +1418,7 @@ const COURSE_DATA = [
       {
        "t": "concept",
        "title": "泰勒公式",
-       "x": "f(x) = Σ_{k=0}^{n} f⁽ᵏ⁾(x0)/k!·(x−x0)^k + 余项。拉格朗日余项：R_n = f⁽ⁿ⁺¹⁾(ξ)/(n+1)!·(x−x0)^{n+1}（定量）；皮亚诺余项：o((x−x0)ⁿ)（局部定性）。x0 = 0 时叫麦克劳林公式。"
+       "x": "f(x) = Σ_{k=0}^{n} f⁽ᵏ⁾(x₀)/k!·(x−x₀)^k + 余项。拉格朗日余项：R_n = f⁽ⁿ⁺¹⁾(ξ)/(n+1)!·(x−x₀)^{n+1}（定量）；皮亚诺余项：o((x−x₀)ⁿ)（局部定性）。x₀ = 0 时叫麦克劳林公式。"
       },
       {
        "t": "list",
@@ -1450,7 +1472,7 @@ const COURSE_DATA = [
       },
       {
        "t": "p",
-       "x": "易错点：拐点是一个点 (x0, f(x0))，答题要写坐标而不是横坐标；f″(x0) = 0 不一定是拐点（如 y = x⁴ 在 0 处两侧不变号）。"
+       "x": "易错点：拐点是一个点 (x₀, f(x₀))，答题要写坐标而不是横坐标；f″(x₀) = 0 不一定是拐点（如 y = x⁴ 在 0 处两侧不变号）。"
       },
       {
        "t": "quiz",
@@ -1483,7 +1505,7 @@ const COURSE_DATA = [
       {
        "t": "concept",
        "title": "两个充分条件",
-       "x": "第一：f′ 在 x0 两侧变号——左正右负为极大，左负右正为极小。第二：f′(x0) = 0 且 f″(x0) > 0 ⇒ 极小；f″(x0) < 0 ⇒ 极大。"
+       "x": "第一：f′ 在 x₀ 两侧变号——左正右负为极大，左负右正为极小。第二：f′(x₀) = 0 且 f″(x₀) > 0 ⇒ 极小；f″(x₀) < 0 ⇒ 极大。"
       },
       {
        "t": "concept",
@@ -1520,7 +1542,7 @@ const COURSE_DATA = [
       {
        "t": "list",
        "items": [
-        "三种渐近线：水平——lim_{x→±∞} f(x) = A ⇒ y = A；垂直——lim_{x→x0} f(x) = ∞ ⇒ x = x0（通常是分母零点/无定义点）；斜渐近线 y = kx + b——k = lim f(x)/x，b = lim [f(x) − kx]（同一方向同时有水平与斜渐近线是不可能的）",
+        "三种渐近线：水平——lim_{x→±∞} f(x) = A ⇒ y = A；垂直——lim_{x→x₀} f(x) = ∞ ⇒ x = x₀（通常是分母零点/无定义点）；斜渐近线 y = kx + b——k = lim f(x)/x，b = lim [f(x) − kx]（同一方向同时有水平与斜渐近线是不可能的）",
         "渐近线常客：arctan x（±π/2 水平）、e^{1/x}、ln x（x→0⁺ 垂直）、分式函数"
        ]
       },
@@ -2218,7 +2240,7 @@ const COURSE_DATA = [
       },
       {
        "t": "quiz",
-       "q": "∬_{Σ上侧} z dxdy，Σ 为上半球面 x²+y²+z² = 1 (z≥0)。",
+       "q": "∬_{Σ} z dxdy，其中 Σ 为上半球面 x²+y²+z² = 1 (z≥0)，取上侧。",
        "a": "上侧取 +：= ∬_{x²+y²≤1} √(1−x²−y²) dσ，极坐标 = ∫[0,2π]dθ ∫[0,1] √(1−r²)·r dr = 2π·(1/3) = 2π/3。"
       },
       {
@@ -2425,15 +2447,15 @@ const CONCEPT_DETAILS = {
   "夹逼准则": "三个数列满足 aₙ ≤ cₙ ≤ bₙ 且两端极限同为 A，则中间的 cₙ 极限也是 A。它最大的价值是处理「不好直接算」的极限——经典应用：n 项和的极限，如 lim (1/(n²+1) + 1/(n²+2) + … + 1/(n²+n))，夹在 n/(n²+n) 与 n/(n²+1) 之间，两端都 → 0。使用口诀：放大、缩小、两端夹。注意：两端极限必须相等，只放大不缩小等于白干。",
   "单调有界准则": "单调递增且有上界的数列必有极限（递减有下界同理）。几何解释：一直往上爬但有个天花板，爬不过去就只能无限逼近某条线。两大应用：① 递推数列求极限——先证明单调有界保证极限存在（用归纳法），再在递推式两边取极限解方程，比如 a₁ = √2, a_{n+1} = √(2 + aₙ) 类；② 证明 (1 + 1/n)ⁿ 单调递增有上界（e 的来源）。注意：不单调也可能有极限，这个准则给的是「充分条件」。",
   "x→∞ 的定义": "∀ε > 0，∃X > 0，当 |x| > X 时 |f(x) − A| < ε。注意 ±∞ 的方向区别：x→+∞ 只看右半边（x > X），x→−∞ 只看左半边（x < −X），x→∞ 是两者都要。重要应用：e^{1/x} 在 x→0⁺ 与 x→0⁻ 时行为完全不同（一个 → +∞，一个 → 0），所以凡含 1/x 的指数、对数必须分左右讨论。",
-  "x→x0 的定义": "∀ε > 0，∃δ > 0，当 0 < |x − x₀| < δ 时 |f(x) − A| < ε。三个考点：① 0 < |x − x₀| 表示挖掉 x₀ 本身——极限与该点取值无关；② ε 与 δ 的关系：ε 是先给的要求，δ 是找出来的回应，δ 不是唯一的；③ 左右极限 f(x₀⁻) 与 f(x₀⁺) 只有都存在且相等，极限才存在。分段函数在分界点求极限必用左右极限。",
+  "x→x₀ 的定义": "∀ε > 0，∃δ > 0，当 0 < |x − x₀| < δ 时 |f(x) − A| < ε。三个考点：① 0 < |x − x₀| 表示挖掉 x₀ 本身——极限与该点取值无关；② ε 与 δ 的关系：ε 是先给的要求，δ 是找出来的回应，δ 不是唯一的；③ 左右极限 f(x₀⁻) 与 f(x₀⁺) 只有都存在且相等，极限才存在。分段函数在分界点求极限必用左右极限。",
   "极限存在的充要条件": "lim f(x) = A ⇔ 左极限 = 右极限 = A。这是考试高频工具，两大使用场景：① 分段函数分界点的极限；② 含 e^{1/x}、arctan(1/x)、取整函数这类「左右行为不同」的函数必须拆左右。例：lim_{x→0} e^{1/x}，右极限是 +∞（不存在），左极限是 0，所以整体极限不存在。反过来：左右极限存在但不相等 → 跳跃间断点。",
   "无穷小": "无穷小不是一个很小的数！它是一个以 0 为极限的变量（函数）。几条关键性质：有限个无穷小的和、积仍是无穷小；无穷小乘有界变量仍是无穷小（求 sin(1/x)·x² 型极限的利器）。注意「有限个」这个限定——无限个无穷小之和可能是任何东西。常数里只有 0 能叫无穷小。",
   "无穷大": "无穷大是绝对值无限增大的变量，同样不是一个很大的数。重要结论：同一过程下，无穷大的倒数是无穷小；但无穷小的倒数是无穷大只在「f(x) ≠ 0」时成立。∞ 不参与四则运算的随意组合：∞ − ∞、∞·0、1^∞ 等都是「未定式」，要化简后处理。无穷大一定无界，但无界不一定是无穷大（如 x·sin x 在 x→∞ 时无界但来回振荡）。",
   "倒数关系": "同一变化过程下：若 f(x) → ∞ 则 1/f(x) → 0（无穷大倒数为无穷小）；若 f(x) → 0 且 f(x) ≠ 0，则 1/f(x) → ∞（无穷小倒数为无穷大）。这是「化无穷大为无穷小来处理」的理论依据，很多 ∞ 型极限先取倒数变成 0 型再算。注意条件 f(x) ≠ 0：比如 x·sin(1/x) 中 sin(1/x) 在 x→0 过程中有零点，就不能直接对它取倒数。",
   "四则运算法则": "极限四则的前提：参加运算的每个极限都「存在」（有限值），且分母极限不为 0。所以遇到 0/0、∞/∞、∞−∞、0·∞、1^∞ 先别急着拆，必须先化简（约分、有理化、等价替换、通分）变成各部分极限存在再拆。经典错误：lim_{x→2} (x²+x)/(x²−x) 直接上下约去 x——约分是对的，但要说清 x→2 时 x ≠ 0 才能约；若 x→0 就要小心。加减法里「主导项」思维：∞−∞ 型先通分或有理化提取最高次。",
   "重要极限一": "lim_{x→0} sin x / x = 1。使用特征：式子里有「三角函数 / 相同的自变量」。核心变形是凑：sin kx / x = k · sin kx/(kx) → k。三个常用推论：x → 0 时 tan x / x → 1、arcsin x / x → 1、arctan x / x → 1（本质都是等价无穷小 sin x ~ x 的变形）。注意 1 − cos x ~ x²/2 是「平方级」无穷小，不是一次的。",
-  "重要极限二": "lim_{x→∞} (1 + 1/x)^x = e，等价形式 lim_{α→0} (1 + α)^{1/α} = e。它的本质是 (1 + 无穷小)^{无穷大} 结构。使用口诀「一凑、二倒、三取指数」：凑出 (1 + 无穷小)^{1/无穷小} 的标准形，指数部分单独求极限。比如 lim (1 + 2/x)^x = lim [(1 + 2/x)^{x/2}]² = e²。这个极限是 e 的定义来源，连续复利、银行计息的数学模型。",
-  "1^∞ 套路": "标准流程三步：① 判型——确认底数 → 1、指数 → ∞；② 凑标准形——把式子写成 (1 + α)^{β}，其中 α 是无穷小、β 是无穷大，关键是把底数凑成 1 + α；③ 套公式——原式极限 = e^{lim α·β}。例：lim (cos x)^{1/x²}，cos x = 1 + (cos x − 1)，α = cos x − 1 ~ −x²/2，α·β = −1/2，答案 e^{−1/2}。替代方案：取对数法（e^{ln 原式}）万能但稍慢。",
+  "重要极限二": "lim_{x→∞} (1 + 1/x)^x = e，等价形式 lim_{α→0} (1 + α)^{1/α} = e。它的本质是「底数趋于 1、指数趋于无穷」的幂结构。使用口诀「一凑、二倒、三取指数」：凑出 (1 + α)^{1/β} 的标准形（α→0，β→∞），指数部分单独求极限。比如 lim (1 + 2/x)^x = lim [(1 + 2/x)^{x/2}]² = e²。这个极限是 e 的定义来源，连续复利、银行计息的数学模型。",
+  "1^∞ 套路": "标准流程三步：① 判型——确认底数 → 1、指数 → ∞；② 凑标准形——把式子写成 (1 + α)^{β}，其中 α 是无穷小、β 是无穷大，关键是把底数凑成 1 + α；③ 套公式——原式极限 = e^{lim α·β}。例：lim (cos x)^{1/x²}，cos x = 1 + (cos x − 1)，α = cos x − 1 ~ −x²/2，α·β = −1/2，答案 e^{−1/2}。替代方案：取对数法（先对原式取 ln，指数单独求极限）万能但稍慢。",
   "阶的定义": "以 x → 0 为例（x → ∞ 同理）：若 lim β/α = 0，β 是 α 的高阶无穷小，记 β = o(α)；若 lim β/α = c ≠ 0，同阶；若 c = 1，等价，记 α ~ β。k 阶无穷小：lim β/x^k = c ≠ 0。记忆表：x→0 时 sin x ~ x，tan x ~ x，arcsin x ~ x，1 − cos x ~ x²/2，ln(1+x) ~ x，e^x − 1 ~ x，(1+x)^α − 1 ~ αx。阶的本质是「消失速度」的快慢等级。",
   "等价替换定理": "乘除因子可以整体替换：lim (f·g)/h 中 f ~ f′ 时可把 f 换成 f′。两个天条：① 只能替换「乘除因子」，加减项原则上不能随意替换——经典反例 lim_{x→0} (tan x − sin x)/x³：把 tan、sin 都换成 x 得 0，错了；正确做法 tan x − sin x = tan x·(1 − cos x) ~ x·x²/2，答案 1/2；② 替换后必须保证剩下的式子极限存在。进阶：加减时若知道「两件事不同阶」也可以换（如 x 与 x² 相加减）。",
   "连续的定义": "三层递进：① 增量形式 lim Δy = 0；② 极限形式 lim_{x→x₀} f(x) = f(x₀)，即「极限值 = 函数值」；③ ε–δ 形式。分解出三个条件：有定义、极限存在（左右相等）、极限等于函数值——三个缺一即间断。连续函数的图像「一笔画」。这个定义把极限工具接到了函数性质上：f(x₀) 能直接代入的前提就是连续。",
@@ -2578,27 +2600,34 @@ function mathify(escapedHtml){
   // 拆出 <mark> 标签，只对纯文本片段做公式识别
   return escapedHtml.split(/(<mark[^>]*>|<\/mark>)/).map(seg=>{
     if(!seg || seg.startsWith("<mark")) return seg;
-    // 公式候选片段：连续的 ASCII/数学符号（含空格、数学减号−、希腊字母、上下标等，中文自然截断）
-    return seg.replace(/[\x20\x21-\x7E\u00B0\u00B2\u00B3\u00B9\u2070-\u209F\u2032\u2033\u2190-\u21FF\u2206\u2207\u2208\u220F\u2212\u2213\u221A\u221E\u2260\u2264\u2265\u2248\u00B1\u00B7\u00D7\u00F7\u0391-\u03C9]{2,}/g, run=>{
+    // 公式候选片段：连续的「非中文」字符（空格、□、希腊字母、上下标、各种数学符号都算，中文自然截断）
+    return seg.replace(/[^\u4e00-\u9fff\u3000-\u303f\uff00-\uffef\u201c\u201d\u2018\u2019\u2026\u2014\n]+/g, run=>{
       // 至少含一个公式特征符才认定为公式，普通英文单词原样保留
-      if(!/[=^_√∑∫∇∆∏≤≥≠≈→←↔∈∋⇒⇔↦∀∃|−·×÷′']/.test(run)) return run;
+      if(!/[=^_√∑∫∇∆∏≤≥≠≈→←↔∈∋⇒⇔↦∀∃|−·×÷′]/.test(run)) return run;
       const lead = run.match(/^\s*/)[0], trail = run.match(/\s*$/)[0];
       let r = run.trim();
       if(!r) return run;
-      // 上标：x^{n+1} 或 x^2
+      // 上标：x^{n+1} 或 x^2 或 1^∞
       r = r.replace(/\^\{([^{}]+)\}/g, '<sup>$1</sup>');
-      r = r.replace(/\^([A-Za-z0-9])/g, '<sup>$1</sup>');
+      r = r.replace(/\^([A-Za-z0-9∞])/g, '<sup>$1</sup>');
       // 下标：a_{n+1} 或 a_1
       r = r.replace(/_\{([^{}]+)\}/g, '<sub>$1</sub>');
       r = r.replace(/_([A-Za-z0-9])/g, '<sub>$1</sub>');
-      // 后续所有替换用占位符保护已生成的标签与 HTML 实体，避免二次处理
+      // 统一占位符保护：成对元素整体保护（sub/sup 含内容）+ 单个标签 + HTML 实体
       const tags = [];
-      r = r.replace(/(<[^>]+>|&[a-zA-Z]+;|&#[0-9]+;)/g, m=>{ tags.push(m); return "\x00" + (tags.length-1) + "\x00"; });
+      r = r.replace(/(<sub>[\s\S]*?<\/sub>|<sup>[\s\S]*?<\/sup>|&[a-zA-Z]+;|&#[0-9]+;|<[^>]+>)/g, m=>{ tags.push(m); return "\x00" + (tags.length-1) + "\x00"; });
+      // 分式：A/B → 上下堆叠（支持一层括号嵌套）
+      const TOK = "(?:\\x00\\d+\\x00|[A-Za-z0-9\\u2070-\\u209F\\u00B2\\u00B3\\u00B9!])+";
+      const frac = (a,b)=>{ tags.push('<span class="frac"><span class="num">'+a+'</span><span class="den">'+b+'</span></span>'); return "\x00" + (tags.length-1) + "\x00"; };
+      r = r.replace(/\(((?:[^()]|\([^()]*\))+)\)\/\(((?:[^()]|\([^()]*\))+)\)/g, (_,a,b)=>frac(a,b));
+      r = r.replace(new RegExp("((?:"+TOK+"))/\\(((?:[^()]|\\([^()]*\\))+)\\)", "g"), (_,a,b)=>frac(a,b));
+      r = r.replace(new RegExp("\\(((?:[^()]|\\([^()]*\\))+)\\)/((?:"+TOK+"))", "g"), (_,a,b)=>frac(a,b));
+      r = r.replace(new RegExp("("+TOK+")/("+TOK+")", "g"), (_,a,b)=>frac(a,b));
       // 函数名/极限号正体（书面规范）
       r = r.replace(/\b(lim|sin|cos|tan|cot|sec|csc|log|ln|max|min|arcsin|arccos|arctan|sup|inf)\b/g, m=>{ tags.push('<span class="up">'+m+'</span>'); return "\x00" + (tags.length-1) + "\x00"; });
-      // 编程/英文常用词也保持正体（防止代码型文本被整段斜体）
+      // 编程/英文常用词保持正体（防止代码型文本被整段斜体）
       r = r.replace(/\b(int|float|double|char|scanf|printf|include|define|else|for|while|return|break|continue|struct|const|void|main|long|short|unsigned|switch|case|default)\b/g, m=>{ tags.push('<span class="up">'+m+'</span>'); return "\x00" + (tags.length-1) + "\x00"; });
-      // 字母（变量）斜体，数字与符号保持正体
+      // 字母（变量）斜体，数字与符号正体
       r = r.replace(/[A-Za-z]+/g, m=>"<i>"+m+"</i>");
       r = r.replace(/\x00(\d+)\x00/g, (_,n)=>tags[+n]);
       return lead + '<span class="math">' + r + '</span>' + trail;
@@ -2893,11 +2922,21 @@ function renderBlocksHTML(course, lesson, lid){
         }).join("") + `</ul>`; break;
       case "quiz": {
         const open = lastRevealed.has(bid);
+        const isProof = !!b.label && b.label.includes("证明");
         const tag = b.label ? `📝 ${esc(b.label)}　` : "❓ ";
         const btnTxt = b.label ? (open ? "隐藏解答" : "显示解答") : (open ? "隐藏答案" : "显示答案");
-        html += `<div class="b-quiz"><div class="q">${tag}<span class="hl-target" data-bk="${bk}">${mathify(textWithMarks(b.q, marksFor(bk)))}</span></div>
+        let ansHtml;
+        if(isProof){
+          // 证明题：按行编号，排成证明步骤
+          const steps = (b.a||"").split("\n").filter(t=>t.trim());
+          ansHtml = '<div class="steps">' + steps.map((t,i)=>
+            `<div class="step"><span class="sn">${i+1}</span><div>${mathify(esc(t))}</div></div>`).join("") + '</div>';
+        } else {
+          ansHtml = mathify(esc(b.a));
+        }
+        html += `<div class="b-quiz ${isProof?"proof":""}"><div class="q">${tag}<span class="hl-target" data-bk="${bk}">${mathify(textWithMarks(b.q, marksFor(bk)))}</span></div>
           <button class="reveal-btn" data-qid="${bid}">${btnTxt}</button>
-          <div class="a ${open?"":"hidden"}" id="ans-${bid}">${b.label?"✍ 解答：":"✅ "}${mathify(esc(b.a))}</div></div>`; break;
+          <div class="a ${open?"":"hidden"}" id="ans-${bid}">${b.label && !isProof ? "✍ 解答：" : ""}${ansHtml}</div></div>`; break;
       }
       default:
         html += `<p class="b-p">${esc(blockText(b))}</p>`;
@@ -2910,17 +2949,24 @@ function renderBlocksHTML(course, lesson, lid){
 /* 我的补充 */
 function renderExtraHTML(lk){
   const arr = extras[lk] || [];
+  const item = n => n.img
+    ? `<div class="extra-item">
+        <img class="extra-img" src="${n.img}" alt="截图">
+        <div class="emeta">${esc(n.time)}<button class="extra-del" data-lk="${lk}" data-nid="${n.id}">删除</button></div>
+      </div>`
+    : `<div class="extra-item">
+        <div class="etext">${esc(n.text)}</div>
+        <div class="emeta">${esc(n.time)}<button class="extra-del" data-lk="${lk}" data-nid="${n.id}">删除</button></div>
+      </div>`;
   return `
     <div class="extra-sec">
       <h3>📝 我的补充</h3>
-      <div id="extraList">${arr.map(n=>`
-        <div class="extra-item">
-          <div class="etext">${esc(n.text)}</div>
-          <div class="emeta">${esc(n.time)}<button class="extra-del" data-lk="${lk}" data-nid="${n.id}">删除</button></div>
-        </div>`).join("") || '<div style="font-size:13px;color:var(--ink2)">还没有补充内容，写下你自己的笔记 / 心得 / 易错点吧。</div>'}</div>
+      <div id="extraList">${arr.map(item).join("") || '<div style="font-size:13px;color:var(--ink2)">还没有补充内容。可以写字（Ctrl+Enter 添加），也可以直接 <b>Ctrl+V 粘贴视频截图</b>，或点「📷 插入截图」选图片文件。</div>'}</div>
       <div class="extra-add">
-        <textarea id="extraInput" placeholder="往这一课里补充你自己的内容…（Ctrl+Enter 快速添加）"></textarea>
+        <textarea id="extraInput" placeholder="往这一课里补充你自己的内容…（Ctrl+Enter 快速添加；支持直接 Ctrl+V 粘贴视频截图）"></textarea>
         <button onclick="addExtra('${lk}')">添加</button>
+        <button class="tbtn extra-img-btn" onclick="document.getElementById('extraFile').click()">📷 插入截图</button>
+        <input type="file" id="extraFile" accept="image/*" class="hidden" onchange="handleExtraImageFile('${lk}', this)">
       </div>
     </div>`;
 }
@@ -3389,6 +3435,71 @@ function addExtra(lk){
     window.scrollTo(0, document.body.scrollHeight);
   }
 }
+
+/* ================================================================
+ *  视频截图 / 图片插入（「我的补充」）
+ *  两种入口：① 输入框里直接 Ctrl+V 粘贴；② 点「📷 插入截图」选文件。
+ *  图片统一压到宽 ≤900px 的 JPEG 再存，防止 localStorage 爆掉。
+ * ================================================================ */
+function compressImage(dataUrl, maxW, quality, cb){
+  const img = new Image();
+  img.onload = ()=>{
+    const scale = Math.min(1, maxW / img.width);
+    const cv = document.createElement("canvas");
+    cv.width = Math.round(img.width * scale);
+    cv.height = Math.round(img.height * scale);
+    cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+    cb(cv.toDataURL("image/jpeg", quality));
+  };
+  img.onerror = ()=>cb(dataUrl);
+  img.src = dataUrl;
+}
+function handleExtraImageFile(lk, input){
+  const file = input.files && input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=> compressImage(reader.result, 900, 0.72, d=>addExtraImage(lk, d));
+  reader.readAsDataURL(file);
+  input.value = "";
+}
+function addExtraImage(lk, dataUrl){
+  if(!extras[lk]) extras[lk] = [];
+  const item = { id:"e"+Date.now()+Math.random().toString(36).slice(2,6), img:dataUrl, time: nowStr() };
+  extras[lk].push(item);
+  try{
+    localStorage.setItem(DB_PREFIX + "extras", JSON.stringify(extras));
+  }catch(e){
+    extras[lk].pop();
+    if(!storageOK) memoryStore[DB_PREFIX+"extras"] = JSON.stringify(extras);
+    const sec = document.querySelector(".extra-sec");
+    if(sec) sec.outerHTML = renderExtraHTML(lk);
+    askConfirm("⚠️ 浏览器存储空间不足，这张图片没保存上。建议删除几条旧补充/旧图片后再试。", ()=>{});
+    return;
+  }
+  const sec = document.querySelector(".extra-sec");
+  if(sec){ sec.outerHTML = renderExtraHTML(lk); window.scrollTo(0, document.body.scrollHeight); }
+}
+/* Ctrl+V 粘贴截图进「我的补充」输入框 */
+document.addEventListener("paste", e=>{
+  if(!e.target || e.target.id !== "extraInput") return;
+  const items = (e.clipboardData || {}).items || [];
+  for(const it of items){
+    if(it.type && it.type.indexOf("image/") === 0){
+      e.preventDefault();
+      const blob = it.getAsFile();
+      if(!blob) return;
+      const reader = new FileReader();
+      reader.onload = ()=>{
+        compressImage(reader.result, 900, 0.72, d=>{
+          const f = currentOpenLesson();
+          if(f) addExtraImage(lessonKey(f.course.id, f.lesson.id), d);
+        });
+      };
+      reader.readAsDataURL(blob);
+      return;
+    }
+  }
+});
 
 /* ================================================================
  *  导出 / 弹窗 / 导航

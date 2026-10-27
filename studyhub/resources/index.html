@@ -330,7 +330,7 @@
       <li><b>✏️ 画笔批注</b>：内容页点「画笔」开启后，可像拿笔一样在页面上任意涂画（5 种颜色、粗细可调），支持擦除、撤销、清空，自动保存。<b>笔迹按页独立</b>：每一页的画笔只留在那一页。</li>
       <li>每课底部有「<b>我的补充</b>」，可以自己往里面加内容（笔记、心得、易错点），支持 <b>Ctrl+V 粘贴视频截图</b>；补充内容也是<b>按页独立</b>的。</li>
     </ul>
-    <p>⚠️ 以上内容保存在浏览器 localStorage 中，<b>换浏览器或清缓存会丢失</b>。注意：在 WorkBuddy 内置预览里打开时处于沙箱环境，数据只保留到本次预览结束（顶部会有黄条提示）；<b>把文件下载到本地后双击用 Chrome/Edge 打开</b>才会永久保存。重要内容请定期点顶栏「导出我的批注」备份。</p>
+    <p>⚠️ 数据保存在哪：桌面版（exe）自动写入本机 <b>%LOCALAPPDATA%\StudyHub\data.json</b>，重启/重装应用都不会丢；浏览器版保存在浏览器 localStorage 中（换浏览器或清缓存会丢失）。重要内容请定期点顶栏「导出我的批注」备份成 JSON 文件。</p>
     <h4>📖 课程内容怎么加？</h4>
     <p>所有课程内容以 JSON 形式写在源文件顶部 <b>COURSE_DATA</b> 里，格式如下（把书和课程发给小智，会自动帮你填进去）：</p>
     <pre>{
@@ -2542,24 +2542,41 @@ function dbGet(key, def){
   const v = rawGet(DB_PREFIX + key);
   try{ return v ? JSON.parse(v) : def; }catch(e){ return def; }
 }
-function dbSet(key, val){ rawSet(DB_PREFIX + key, JSON.stringify(val)); }
+function dbSet(key, val){
+  rawSet(DB_PREFIX + key, JSON.stringify(val));
+  scheduleDiskSave();   // 桌面模式同步落盘
+}
 let notes = dbGet("notes", {});    // blockKey -> [{id,text,time}]
 let marks = dbGet("marks", {});    // blockKey -> [[start,end],...]
 let extras = dbGet("extras", {});  // 按「课+页」存储，键为 lk#p页码
-/* 旧版补充数据（整课一份）自动迁移到第 1 页 */
-(function migrateLegacyExtras(){
-  for(const k of Object.keys(extras)){
-    if(k.indexOf("#p") < 0){ extras[k + "#p0"] = extras[k]; delete extras[k]; }
-  }
-})();
 let doneMap = dbGet("done", {});   // lessonKey -> true
 let draws = dbGet("draws", {});    // 画笔笔迹：按「课+页」存储，键为 lk#p页码
-/* 旧版数据（整课一份、不分页）自动迁移到第 1 页 */
-(function migrateLegacyDraws(){
+
+function migrateAll(){
+  /* 旧版数据（整课一份、不分页）自动迁移到第 1 页 */
   for(const k of Object.keys(draws)){
     if(k.indexOf("#p") < 0){ draws[k + "#p0"] = draws[k]; delete draws[k]; }
   }
-})();
+  for(const k of Object.keys(extras)){
+    if(k.indexOf("#p") < 0){ extras[k + "#p0"] = extras[k]; delete extras[k]; }
+  }
+}
+migrateAll();
+
+/* ================================================================
+ *  桌面模式（Neutralino）：数据落盘 %LOCALAPPDATA%/StudyHub/data.json
+ *  重启应用 / 重新打包 / 删除 dist 都不丢；浏览器模式仍用 localStorage
+ * ================================================================ */
+const isDesktop = typeof Neutralino !== "undefined" && !!(Neutralino.os && Neutralino.filesystem) && !!(window.NL_PORT || window.NL_TOKEN);
+const appState = () => ({ app: "studyhub", savedAt: nowStr(), notes, marks, extras, done: doneMap, draws });
+let diskSaveTimer = null, diskDataPath = "";
+function scheduleDiskSave(){
+  if(!isDesktopNow() || !diskDataPath) return;
+  clearTimeout(diskSaveTimer);
+  diskSaveTimer = setTimeout(async ()=>{
+    try{ await Neutralino.filesystem.writeFile(diskDataPath, JSON.stringify(appState(), null, 1)); }catch(e){}
+  }, 400);
+}
 
 /* ================================================================
  *  工具函数
@@ -3458,15 +3475,18 @@ function addExtraImage(lk, dataUrl){
   if(!extras[lk]) extras[lk] = [];
   const item = { id:"e"+Date.now()+Math.random().toString(36).slice(2,6), img:dataUrl, time: nowStr() };
   extras[lk].push(item);
-  try{
-    localStorage.setItem(DB_PREFIX + "extras", JSON.stringify(extras));
-  }catch(e){
-    extras[lk].pop();
-    if(!storageOK) memoryStore[DB_PREFIX+"extras"] = JSON.stringify(extras);
-    const sec = document.querySelector(".extra-sec");
-    if(sec) sec.outerHTML = renderExtraHTML(lk);
-    askConfirm("⚠️ 浏览器存储空间不足，这张图片没保存上。建议删除几条旧补充/旧图片后再试。", ()=>{});
-    return;
+  if(isDesktop){ scheduleDiskSave(); }
+  else{
+    try{
+      localStorage.setItem(DB_PREFIX + "extras", JSON.stringify(extras));
+    }catch(e){
+      extras[lk].pop();
+      if(!storageOK) memoryStore[DB_PREFIX+"extras"] = JSON.stringify(extras);
+      const sec0 = document.querySelector(".extra-sec");
+      if(sec0) sec0.outerHTML = renderExtraHTML(lk);
+      askConfirm("⚠️ 浏览器存储空间不足，这张图片没保存上。建议删除几条旧补充/旧图片后再试。", ()=>{});
+      return;
+    }
   }
   const sec = document.querySelector(".extra-sec");
   if(sec){ sec.outerHTML = renderExtraHTML(lk); window.scrollTo(0, document.body.scrollHeight); }
@@ -3527,9 +3547,67 @@ function goHome(){ currentCourse = null; renderHome(); }
 
 window.addEventListener("resize", ()=>{ if(currentView === "lesson") sizeCanvas(); });
 
-/* 启动 */
-renderHome();
-if(!storageOK) document.getElementById("storageWarn").classList.remove("hidden");
+/* 启动：桌面模式先从磁盘读数据（带重试，防连接竞态），浏览器模式直接渲染 */
+const isDesktopNow = () => typeof Neutralino !== "undefined" && !!(Neutralino.os && Neutralino.filesystem) && !!(window.NL_PORT || window.NL_TOKEN);
+(async ()=>{
+  try{ if(typeof Neutralino !== "undefined" && Neutralino.init) Neutralino.init(); }catch(e){}
+  const dbg = [];
+  let dbgPath = "";
+  const dbgLog = (m) => { dbg.push(nowStr() + " " + m); try{ if(dbgPath) Neutralino.filesystem.appendFile(dbgPath, dbg.join('\n') + '\n'); dbg.length = 0; }catch(e2){} };
+  let did = false;
+  for(let attempt = 0; attempt < 3 && !did; attempt++){
+    dbgLog("尝试 " + attempt + " NL_PORT=" + (typeof window.NL_PORT !== 'undefined' ? window.NL_PORT : '无') + " NL_TOKEN=" + (typeof window.NL_TOKEN !== 'undefined' ? '有' : '无'));
+    if(!isDesktopNow()){ dbgLog("  isDesktopNow=false"); await new Promise(r=>setTimeout(r, 700)); continue; }
+    try{
+      let base = "";
+      try{ base = (await Neutralino.os.getPath('data')).replace(/\\/g, '/'); dbgLog("  getPath('data')=" + base); }catch(e1){ dbgLog("  getPath失败: " + (e1.message || e1.code || e1)); }
+      if(!base){
+        try{ base = (await Neutralino.os.getEnv('USERPROFILE')).replace(/\\/g, '/') + '/AppData/Roaming'; dbgLog("  getEnv回退=" + base); }catch(e2){ dbgLog("  getEnv失败: " + (e2.message || e2.code || e2)); }
+      }
+      if(!base){ await new Promise(r=>setTimeout(r, 1200)); continue; }
+      dbgPath = base + '/StudyHub-init.log';
+      const dir = base + '/StudyHub';
+      diskDataPath = dir + '/data.json';
+      dbgLog("  目标文件: " + diskDataPath);
+      // 单实例锁：60 秒内有心跳说明已有实例在运行，本次直接退出（防双开互踩存储）
+      try{
+        const lockPath = dir + '/.lock';
+        let fresh = false;
+        try{ const lt = parseInt((await Neutralino.filesystem.readFile(lockPath)) || '0', 10); fresh = lt && (Date.now() - lt) < 60000; }catch(e5){}
+        if(fresh){
+          dbgLog("  已有实例在运行，退出本次启动");
+          try{ await Neutralino.app.exit(); }catch(e6){}
+          return;
+        }
+        await Neutralino.filesystem.writeFile(lockPath, String(Date.now()));
+        setInterval(async ()=>{ try{ await Neutralino.filesystem.writeFile(lockPath, String(Date.now())); }catch(e){} }, 20000);
+      }catch(e4){}
+      try{
+        const txt = (await Neutralino.filesystem.readFile(diskDataPath)) || "{}";
+        const d = JSON.parse(txt);
+        // 合并而非覆盖：localStorage 与磁盘文件两边数据取并集，谁都不能吞掉谁
+        const mergeObj = (target, src) => { for(const k of Object.keys(src || {})){ if(!target[k]) target[k] = src[k]; } };
+        mergeObj(notes, d.notes);
+        mergeObj(marks, d.marks);
+        mergeObj(extras, d.extras);
+        mergeObj(draws, d.draws);
+        for(const k of Object.keys(d.done || {})){ if(!doneMap[k]) doneMap[k] = d.done[k]; }
+        migrateAll();
+        dbgLog("  读取成功");
+      }catch(e3){ dbgLog("  读取跳过: " + (e3.message || e3.code || e3)); }
+      try{ await Neutralino.filesystem.createDirectory(dir); }catch(e4){ /* 目录已存在，忽略 */ }
+      await Neutralino.filesystem.writeFile(diskDataPath, JSON.stringify(appState(), null, 1));
+      did = true;   // 落盘成功
+      dbgLog("  写入成功");
+    }catch(e){
+      dbgLog("  异常: " + (e.message || e.code || JSON.stringify(e)));
+      diskDataPath = "";
+      await new Promise(r=>setTimeout(r, 1200));   // 连接可能还没就绪，重试
+    }
+  }
+  renderHome();
+  if(!storageOK && !isDesktopNow()) document.getElementById("storageWarn").classList.remove("hidden");
+})();
 </script>
 </body>
 </html>

@@ -8,7 +8,11 @@
   "enableServer": true,
   "enableNativeAPI": true,
   "tokenSecurity": "one-time",
-  "nativeAllowList": [],
+  "nativeAllowList": [
+    "filesystem.*",
+    "os.*",
+    "app.*"
+  ],
   "modes": {
     "window": {
       "title": "学习中枢 · StudyHub",

@@ -2548,7 +2548,13 @@ let notes = dbGet("notes", {});    // blockKey -> [{id,text,time}]
 let marks = dbGet("marks", {});    // blockKey -> [[start,end],...]
 let extras = dbGet("extras", {});  // lessonKey -> [{id,text,time}]
 let doneMap = dbGet("done", {});   // lessonKey -> true
-let draws = dbGet("draws", {});    // lessonKey -> [ {c:颜色,w:粗细,pts:[[nx,y],...]} ]  画笔笔迹
+let draws = dbGet("draws", {});    // 画笔笔迹：按「课+页」存储，键为 lk#p页码
+/* 旧版数据（整课一份、不分页）自动迁移到第 1 页 */
+(function migrateLegacyDraws(){
+  for(const k of Object.keys(draws)){
+    if(k.indexOf("#p") < 0){ draws[k + "#p0"] = draws[k]; delete draws[k]; }
+  }
+})();
 
 /* ================================================================
  *  工具函数
@@ -2774,7 +2780,7 @@ let currentView = "home";
 let currentCourse = null;
 let openNoteBlocks = new Set();  // 当前展开批注区的 block
 let lastRevealed = new Set();    // 已展开答案的题
-let penMode = false, penEraser = false, penColor = "#ef4444", penWidth = 4;
+let penMode = false, penEraser = false, penColor = "#ef4444", penWidth = 2;
 let curStroke = null, lastPt = null, erasing = false;
 
 /* ================================================================
@@ -2826,22 +2832,45 @@ function pagerHTML(pages){
   </div>`;
 }
 
-/* 画笔圆点光标：笔模式下鼠标处显示一个与笔迹同色同粗的圆点 */
+/* 画笔/橡皮光标：画笔时显示同色同粗圆点，擦除时显示虚线圈（大小=实际擦除范围） */
 let penDotEl = null;
 function updatePenDot(e){
   if(!penDotEl){ penDotEl = document.createElement("div"); penDotEl.id = "penDot"; document.body.appendChild(penDotEl); }
-  const show = penMode && !penEraser && currentView === "lesson"
-            && e && e.target && e.target.id === "drawCanvas";
+  const show = penMode && currentView === "lesson" && e && e.target && e.target.id === "drawCanvas";
   if(!show){ penDotEl.style.display = "none"; return; }
-  const size = Math.max(penWidth, 5);
-  penDotEl.style.width = size + "px";
-  penDotEl.style.height = size + "px";
-  penDotEl.style.background = penColor;
+  if(penEraser){
+    const size = Math.max((10 + penWidth) * 2, 18);
+    penDotEl.style.width = size + "px";
+    penDotEl.style.height = size + "px";
+    penDotEl.style.background = "rgba(255,255,255,.25)";
+    penDotEl.style.border = "2px dashed #475569";
+    penDotEl.style.boxShadow = "0 0 0 1px rgba(255,255,255,.8)";
+  } else {
+    const size = Math.max(penWidth, 5);
+    penDotEl.style.width = size + "px";
+    penDotEl.style.height = size + "px";
+    penDotEl.style.background = penColor;
+    penDotEl.style.border = "none";
+    penDotEl.style.boxShadow = "0 0 0 1.5px rgba(255,255,255,.85), 0 1px 5px rgba(0,0,0,.35)";
+  }
   penDotEl.style.left = e.clientX + "px";
   penDotEl.style.top = e.clientY + "px";
   penDotEl.style.display = "block";
 }
 document.addEventListener("mousemove", updatePenDot);
+
+/* 画笔保存成功提示 */
+let hintTimer = null;
+function hintSaved(){
+  const el = document.querySelector(".pen-hint");
+  if(!el) return;
+  clearTimeout(hintTimer);
+  el.textContent = "✓ 已自动保存";
+  hintTimer = setTimeout(()=>{
+    const e2 = document.querySelector(".pen-hint");
+    if(e2) e2.textContent = penMode ? (penEraser ? "擦除模式：按住拖动，划过笔迹即被擦掉" : "画笔已开启：按住鼠标在页面上涂画，自动保存") : "点「画笔」后可像用笔一样在页面上涂画批注";
+  }, 1200);
+}
 
 function renderLesson(cid, lid, focusBlockId){
   const f = findLesson(cid, lid);
@@ -3101,7 +3130,11 @@ document.addEventListener("mousedown", e=>{
  * ================================================================ */
 const PEN_COLORS = [["#ef4444","红"],["#f59e0b","橙"],["#22c55e","绿"],["#3b82f6","蓝"],["#a855f7","紫"]];
 
-function strokesOf(lk){ if(!draws[lk]) draws[lk] = []; return draws[lk]; }
+function strokesOf(lk){
+  const k = lk + "#p" + pageIdx;
+  if(!draws[k]) draws[k] = [];
+  return draws[k];
+}
 
 function penBarHTML(){
   return `<div class="pen-bar ${penMode?"penate":""}">
@@ -3109,7 +3142,7 @@ function penBarHTML(){
     <span class="pen-sep"></span>
     ${PEN_COLORS.map(([c,n])=>`<button class="pen-color ${penColor===c?"active":""}" style="background:${c}" title="${n}色" onclick="setPenColor('${c}')"></button>`).join("")}
     <span class="pen-sep"></span>
-    ${[2,4,7].map(w=>`<button class="pen-btn ${penWidth===w?"active":""}" style="padding:4px 9px" onclick="setPenWidth(${w})">${w===2?"细":w===4?"中":"粗"}</button>`).join("")}
+    ${[1,2,4].map(w=>`<button class="pen-btn ${penWidth===w?"active":""}" style="padding:4px 9px" onclick="setPenWidth(${w})">${w===1?"细":w===2?"中":"粗"}</button>`).join("")}
     <span class="pen-sep"></span>
     <button class="pen-btn ${penEraser?"active":""}" onclick="toggleEraser()">🧽 擦除</button>
     <button class="pen-btn" onclick="undoStroke()">↩ 撤销</button>
@@ -3126,7 +3159,7 @@ function refreshPenUI(){
   if(bar) bar.outerHTML = penBarHTML();
   const body = document.getElementById("lessonBody");
   if(body) body.classList.toggle("pen-on", penMode);
-  if((!penMode || penEraser) && penDotEl) penDotEl.style.display = "none";
+  if(!penMode && penDotEl) penDotEl.style.display = "none";
   sizeCanvas();
 }
 function sizeCanvas(){
@@ -3148,9 +3181,9 @@ function redrawStrokes(){
   ctx.setTransform(dpr,0,0,dpr,0,0);
   ctx.clearRect(0,0,cv.width/dpr,cv.height/dpr);
   const f = currentOpenLesson(); if(!f) return;
-  const arr = draws[lessonKey(f.course.id, f.lesson.id)] || [];
+  const arr = draws[lessonKey(f.course.id, f.lesson.id) + "#p" + pageIdx] || [];
   const cw = cv.width/dpr;
-  for(const s of arr) drawStroke(ctx, s, cw);
+  for(const st of arr) drawStroke(ctx, st, cw);
 }
 function drawStroke(ctx, s, cw){
   if(!s.pts || !s.pts.length) return;
@@ -3218,19 +3251,21 @@ function onPenUp(){
     arr.push(curStroke);
     if(arr.length > 400) arr.shift();   // 防止 localStorage 爆掉
     dbSet("draws", draws);
+    hintSaved();
   }
   curStroke = null; lastPt = null;
   redrawStrokes();
 }
 function eraseAt(lk, p){
-  const arr = draws[lk]; if(!arr || !arr.length) return;
+  const arr = draws[lk + "#p" + pageIdx]; if(!arr || !arr.length) return;
   const cv = document.getElementById("drawCanvas");
   const cw = cv ? cv.width/(window.devicePixelRatio||1) : 1;
   const before = arr.length;
-  draws[lk] = arr.filter(s => !s.pts.some(pt=>{
+  const sk = lk + "#p" + pageIdx;
+  draws[sk] = arr.filter(s => !s.pts.some(pt=>{
     return Math.hypot(pt[0]*cw - p.x, pt[1] - p.y) < 10 + s.w;
   }));
-  if(draws[lk].length !== before){ dbSet("draws", draws); redrawStrokes(); }
+  if(draws[sk].length !== before){ dbSet("draws", draws); redrawStrokes(); hintSaved(); }
 }
 function undoStroke(){
   const f = currentOpenLesson(); if(!f) return;
@@ -3238,18 +3273,20 @@ function undoStroke(){
   const arr = strokesOf(lk);
   if(!arr.length) return;
   arr.pop();
-  if(!arr.length) delete draws[lk];
+  if(!arr.length) delete draws[lk + "#p" + pageIdx];
   dbSet("draws", draws);
   redrawStrokes();
+  hintSaved();
 }
 function clearStrokes(){
   const f = currentOpenLesson(); if(!f) return;
-  const lk = lessonKey(f.course.id, f.lesson.id);
-  if(!(draws[lk]||[]).length) return;
-  askConfirm("清空本课所有画笔痕迹？此操作不可恢复。", ()=>{
-    delete draws[lk];
+  const sk = lessonKey(f.course.id, f.lesson.id) + "#p" + pageIdx;
+  if(!(draws[sk]||[]).length) return;
+  askConfirm("清空本页所有画笔痕迹？此操作不可恢复。", ()=>{
+    delete draws[sk];
     dbSet("draws", draws);
     redrawStrokes();
+    hintSaved();
   });
 }
 

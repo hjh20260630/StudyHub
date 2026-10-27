@@ -62,7 +62,7 @@
     font-size:12.5px; padding:6px 22px;
   }
   /* ===== 主体 ===== */
-  .main{max-width:1100px; margin:0 auto; padding:26px 22px 80px;}
+  .main{max-width:1400px; margin:0 auto; padding:26px 22px 80px;}
   .crumb{font-size:13px; color:var(--ink2); margin-bottom:14px;}
   .crumb a{color:var(--accent); text-decoration:none; cursor:pointer;}
   .crumb a:hover{text-decoration:underline;}
@@ -112,41 +112,48 @@
   }
   .done-toggle.on .box{background:var(--ok); border-color:var(--ok); color:#fff;}
   .block{
-    background:var(--card); border:1px solid var(--line); border-radius:14px;
-    padding:18px 22px; margin-bottom:14px; box-shadow:var(--shadow); position:relative;
+    background:var(--card); border:1px solid var(--line); border-radius:20px;
+    padding:36px 44px; margin-bottom:22px; box-shadow:var(--shadow); position:relative;
+    font-size:19px; line-height:1.9;
   }
   .block:hover .block-actions{opacity:1;}
-  .block-actions{position:absolute; right:12px; top:10px; opacity:0; transition:.15s;}
+  .block-actions{position:absolute; right:16px; top:14px; opacity:0; transition:.15s;}
   .block-actions button{
-    border:1px solid var(--line); background:#fff; border-radius:7px;
-    font-size:12px; padding:3px 9px; cursor:pointer; color:var(--ink2);
+    border:1px solid var(--line); background:#fff; border-radius:8px;
+    font-size:14px; padding:5px 12px; cursor:pointer; color:var(--ink2);
   }
   .block-actions button:hover{color:var(--accent); border-color:var(--accent);}
-  .b-h{font-size:17px; color:var(--accent);}
+  .b-h{font-size:24px; color:var(--accent);}
   .b-p{white-space:pre-wrap;}
-  .b-concept{background:var(--accent2); border-radius:10px; padding:12px 16px;}
-  .bc-title{font-weight:700; color:var(--accent); margin-bottom:4px;}
+  .b-concept{background:var(--accent2); border-radius:14px; padding:24px 28px;}
+  .bc-title{font-weight:700; color:var(--accent); margin-bottom:10px; font-size:22px;}
   .bc-body{white-space:pre-wrap;}
-  .b-code{border-radius:10px; overflow:hidden; border:1px solid #d8dfea;}
+  .cd-sec{
+    margin-top:18px; padding-top:16px;
+    border-top:1.5px dashed #c7d2ee;
+  }
+  .cd-title{font-weight:700; color:#475569; font-size:15px; margin-bottom:8px;}
+  .cd-body{white-space:pre-wrap; color:#334155; font-size:17px; line-height:1.9;}
+  .b-code{border-radius:12px; overflow:hidden; border:1px solid #d8dfea;}
   .code-bar{
     display:flex; justify-content:space-between; align-items:center;
-    background:#1e293b; color:#94a3b8; font-size:12px; padding:5px 12px;
+    background:#1e293b; color:#94a3b8; font-size:14px; padding:7px 14px;
   }
-  .code-bar button{background:transparent; border:1px solid #475569; color:#cbd5e1; border-radius:6px; font-size:11px; padding:2px 8px; cursor:pointer;}
+  .code-bar button{background:transparent; border:1px solid #475569; color:#cbd5e1; border-radius:6px; font-size:13px; padding:3px 10px; cursor:pointer;}
   .code-bar button:hover{color:#fff; border-color:#fff;}
   .b-code pre{
-    background:#0f172a; color:#e2e8f0; padding:14px 16px;
-    overflow-x:auto; font-family:Consolas,"Courier New",monospace; font-size:13.5px; line-height:1.6;
+    background:#0f172a; color:#e2e8f0; padding:18px 22px;
+    overflow-x:auto; font-family:Consolas,"Courier New",monospace; font-size:17px; line-height:1.7;
   }
   .b-code pre mark{background:rgba(253,230,138,.35); color:#fff; border-radius:2px;}
-  .b-list{padding-left:22px;}
-  .b-list li{margin:3px 0;}
-  .b-quiz{background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:12px 16px;}
-  .b-quiz .q{font-weight:600; margin-bottom:8px;}
-  .b-quiz .a{margin-top:8px; color:#166534; white-space:pre-wrap;}
+  .b-list{padding-left:30px;}
+  .b-list li{margin:8px 0;}
+  .b-quiz{background:#fffbeb; border:1px solid #fde68a; border-radius:14px; padding:24px 28px;}
+  .b-quiz .q{font-weight:600; margin-bottom:12px;}
+  .b-quiz .a{margin-top:12px; color:#166534; white-space:pre-wrap;}
   .b-quiz .reveal-btn{
     border:1px solid #f59e0b; background:#fff; color:#b45309;
-    border-radius:7px; padding:3px 12px; font-size:12px; cursor:pointer;
+    border-radius:8px; padding:5px 16px; font-size:14px; cursor:pointer;
   }
   .b-quiz .reveal-btn:hover{background:#fef3c7;}
   .hidden{display:none;}
@@ -206,7 +213,7 @@
   .pen-sep{width:1px; height:20px; background:var(--line);}
   .pen-hint{font-size:12px; color:var(--ink2);}
   #drawCanvas{position:absolute; inset:0; z-index:5; pointer-events:none; touch-action:none;}
-  .lessonBody.pen-on #drawCanvas{pointer-events:auto; cursor:crosshair;}
+  .lessonBody.pen-on #drawCanvas{pointer-events:auto; cursor:none;}
   .lessonBody.pen-on{user-select:none;}
   /* 定位闪烁 */
   @keyframes flash{0%{background:#fde68a;}100%{background:transparent;}}
@@ -237,6 +244,34 @@
     font-size:12px; overflow-x:auto; margin:8px 0; line-height:1.6;
   }
   .modal .close-btn{margin-top:16px; width:100%; padding:9px; border:none; border-radius:9px; background:var(--accent); color:#fff; font-size:14px; cursor:pointer;}
+  /* ===== 分页 ===== */
+  .pager{
+    display:flex; align-items:center; justify-content:center; gap:14px;
+    background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:12px 16px; margin-bottom:18px; box-shadow:var(--shadow);
+  }
+  .pager button{
+    border:1px solid var(--line); background:#fff; color:var(--ink);
+    border-radius:9px; padding:8px 20px; font-size:14px; cursor:pointer;
+  }
+  .pager button:hover:not(:disabled){border-color:var(--accent); color:var(--accent);}
+  .pager button:disabled{opacity:.35; cursor:not-allowed;}
+  .pager .pg-info{font-size:14px; color:var(--ink2); min-width:88px; text-align:center;}
+  .pager .pg-info b{color:var(--accent);}
+  /* ===== 画笔圆点光标 ===== */
+  #penDot{
+    position:fixed; z-index:98; border-radius:50%;
+    pointer-events:none; display:none;
+    transform:translate(-50%,-50%);
+    box-shadow:0 0 0 1.5px rgba(255,255,255,.85), 0 1px 5px rgba(0,0,0,.35);
+  }
+  /* ===== 公式书面体 ===== */
+  .math{
+    font-family:"Cambria Math","STIX Two Math","Latin Modern Math","Times New Roman",serif;
+    font-style:italic; font-size:1.12em; letter-spacing:.02em;
+  }
+  .math .up{font-style:normal; letter-spacing:.03em;}
+  .math sup, .math sub{font-style:normal; font-size:.72em;}
   @media (max-width:640px){ .main{padding:18px 12px 60px;} }
 </style>
 </head>
@@ -2370,62 +2405,104 @@ const COURSE_DATA = [
    ]
   }
  ]
-},
-
-  {
-    id: "c-demo",
-    title: "C 语言入门（示例课程）",
-    desc: "这是一个演示用的示例课程，用来展示目录、内容页、搜索、批注的完整效果。正式课程内容之后填进来。",
-    color: "#4f6ef7",
-    chapters: [
-      {
-        id: "ch1", title: "第一章 · 基础语法",
-        lessons: [
-          {
-            id: "l1", title: "变量与数据类型",
-            blocks: [
-              { t: "p", x: "变量就像一个贴了名字标签的盒子：程序把一个值放进去，之后随时可以通过名字把它取出来用。C 语言是强类型语言——盒子在造出来时就要声明装什么类型的值。" },
-              { t: "concept", title: "什么是变量", x: "变量是内存中一块有名字的存储空间。声明变量的格式：类型名 变量名 = 初始值;" },
-              { t: "code", lang: "c", x: "int age = 20;          // 整型：装整数\nfloat price = 9.5f;    // 单精度浮点：装小数\nchar grade = 'A';      // 字符型：装一个字符\nprintf(\"%d %f %c\\n\", age, price, grade);" },
-              { t: "list", items: [
-                "int：整数，占 4 字节，如 42、-7",
-                "float / double：小数，精度不同",
-                "char：单个字符，本质是小整数（ASCII 码）",
-                "变量名只能用字母、数字、下划线，且不能以数字开头"
-              ] },
-              { t: "h", x: "易错点" },
-              { t: "p", x: "1. 变量没初始化就使用，值是随机的垃圾值。\n2. = 是赋值，== 才是判断相等，这是新手最常见的笔误。\n3. scanf 忘写取地址符 & 会导致程序崩溃。" },
-              { t: "quiz", q: "下面哪行代码有错误？\nA. int a = 5;\nB. float b = 3.14;\nC. char c = \"A\";\nD. int d = a + 1;", a: "C。char 只能装单个字符，要用单引号 'A'；双引号 \"A\" 是字符串，类型不匹配。" }
-            ]
-          },
-          {
-            id: "l2", title: "运算符与表达式",
-            blocks: [
-              { t: "p", x: "本课内容待填充：算术运算符、关系运算符、逻辑运算符、优先级。（示例占位）" }
-            ]
-          }
-        ]
-      },
-      {
-        id: "ch2", title: "第二章 · 流程控制",
-        lessons: [
-          {
-            id: "l3", title: "if / else 判断",
-            blocks: [
-              { t: "p", x: "本课内容待填充：条件分支的三种形态、嵌套 if、常见坑（= 与 ==）。（示例占位）" }
-            ]
-          },
-          {
-            id: "l4", title: "for / while 循环",
-            blocks: [
-              { t: "p", x: "本课内容待填充：循环三要素、break 与 continue、死循环。（示例占位）" }
-            ]
-          }
-        ]
-      },
-    ]
-  }
+}
 ];
+
+/* ================================================================
+ *  CONCEPT_DETAILS —— 概念详解词典
+ *  渲染时按概念标题匹配，自动在概念卡内追加「📖 详解」区块。
+ *  想给某个概念加深度，在这里加一条即可（公式用 ^{} _{} 写法，会自动排版）。
+ * ================================================================ */
+const CONCEPT_DETAILS = {
+  "邻域": "直观理解：以 x₀ 为中心、半径 δ 的一个小开区间， δ 控制「多近」。去心邻域挖掉中心点 x₀，是因为极限关心的是「趋近过程」而不是「这一点的取值」——这正是后面函数极限定义里 0 < |x−x₀| < δ 的来历。考试常考：邻域与去心邻域的记号区别（Ů 读作「U 去心」），以及「x→x₀ 时 f(x) 有没有极限与 f(x₀) 是否有定义无关」这句话的含义。",
+  "映射": "映射是「函数」概念的抽象化：函数是数集到数集的映射，映射是任意集合之间的对应。判断映射只看两条：① 每个原像都有像（不许有落单的）；② 像必须唯一（不许一对多）。一对多是映射吗？不是！但多对一是允许的。双射的重要性在于它是「可逆」的前提——反函数、反三角函数的存在性判定全靠它。",
+  "函数": "函数两要素里「对应法则」相同指：同样的输入必须得到同样的输出。经典反例：f(x) = |x| 与 g(x) = (√x)² 定义域不同（前者是 R，后者要求 x ≥ 0），所以不是同一个函数。分段函数是一个函数，不是几个函数；x₀ 处左右表达式不同只影响求极限方式，不影响「它是一个函数」。",
+  "反函数": "反函数存在的充要条件是原函数一一对应（双射）。严格单调函数必有反函数——这就是为什么 y = x² 在 R 上没有反函数，但限定 x ≥ 0 后 y = √x 就是它的反函数。反函数图像与原函数图像关于直线 y = x 对称；求反函数的口诀：先用 y 表示 x，再互换 x、y。反三角函数本质就是三角函数在「单调区间」上的反函数，所以 arcsin 的值域被限定为 [−π/2, π/2]。",
+  "复合函数": "复合的前提是「内层函数的值域 ∩ 外层函数的定义域 ≠ ∅」。考试重点：① 分解复合链——从外往里一层层剥，如 y = sin²(3x+1) = [外层平方] ∘ [中层 sin] ∘ [内层 3x+1]，求导链式法则正是按这个链逐层进行；② 求 f(g(x)) 的表达式时把 f 中的 x 整体换成 g(x)，特别注意分段函数复合时要逐段讨论 g(x) 落在哪个段里。",
+  "初等函数": "五类基本初等函数：幂函数 x^μ、指数函数 a^x、对数函数 log_a(x)、三角函数、反三角函数。由它们经过有限次四则运算和复合、且能用一个式子表示的，叫初等函数。注意三个「非初等」的常客：符号函数 sgn(x)、取整函数 [x]、分段函数（多数不是初等函数）。初等函数在其定义区间内必连续——这条是后面「一切求极限直接代入」的合法性来源。",
+  "ε–N 定义": "定义的灵魂：无论你要求多接近（ε 多小），总存在一个门槛 N，过了这个门槛（n > N）后所有项都进入误差带。三个易错点：① ε 是任意给定的正数，是「先给的精度要求」，不是随 n 变的；② N 不唯一，比它大都行，所以定义只要求「存在」，不需要「最小」；③ |aₙ − a| < ε 表示 aₙ 可以无限逼近但不等于 a，极限值与数列里有没有这一项无关。证明题套路：任给 ε > 0，倒着解出 N，正着叙述。",
+  "夹逼准则": "三个数列满足 aₙ ≤ cₙ ≤ bₙ 且两端极限同为 A，则中间的 cₙ 极限也是 A。它最大的价值是处理「不好直接算」的极限——经典应用：n 项和的极限，如 lim (1/(n²+1) + 1/(n²+2) + … + 1/(n²+n))，夹在 n/(n²+n) 与 n/(n²+1) 之间，两端都 → 0。使用口诀：放大、缩小、两端夹。注意：两端极限必须相等，只放大不缩小等于白干。",
+  "单调有界准则": "单调递增且有上界的数列必有极限（递减有下界同理）。几何解释：一直往上爬但有个天花板，爬不过去就只能无限逼近某条线。两大应用：① 递推数列求极限——先证明单调有界保证极限存在（用归纳法），再在递推式两边取极限解方程，比如 a₁ = √2, a_{n+1} = √(2 + aₙ) 类；② 证明 (1 + 1/n)ⁿ 单调递增有上界（e 的来源）。注意：不单调也可能有极限，这个准则给的是「充分条件」。",
+  "x→∞ 的定义": "∀ε > 0，∃X > 0，当 |x| > X 时 |f(x) − A| < ε。注意 ±∞ 的方向区别：x→+∞ 只看右半边（x > X），x→−∞ 只看左半边（x < −X），x→∞ 是两者都要。重要应用：e^{1/x} 在 x→0⁺ 与 x→0⁻ 时行为完全不同（一个 → +∞，一个 → 0），所以凡含 1/x 的指数、对数必须分左右讨论。",
+  "x→x0 的定义": "∀ε > 0，∃δ > 0，当 0 < |x − x₀| < δ 时 |f(x) − A| < ε。三个考点：① 0 < |x − x₀| 表示挖掉 x₀ 本身——极限与该点取值无关；② ε 与 δ 的关系：ε 是先给的要求，δ 是找出来的回应，δ 不是唯一的；③ 左右极限 f(x₀⁻) 与 f(x₀⁺) 只有都存在且相等，极限才存在。分段函数在分界点求极限必用左右极限。",
+  "极限存在的充要条件": "lim f(x) = A ⇔ 左极限 = 右极限 = A。这是考试高频工具，两大使用场景：① 分段函数分界点的极限；② 含 e^{1/x}、arctan(1/x)、取整函数这类「左右行为不同」的函数必须拆左右。例：lim_{x→0} e^{1/x}，右极限是 +∞（不存在），左极限是 0，所以整体极限不存在。反过来：左右极限存在但不相等 → 跳跃间断点。",
+  "无穷小": "无穷小不是一个很小的数！它是一个以 0 为极限的变量（函数）。几条关键性质：有限个无穷小的和、积仍是无穷小；无穷小乘有界变量仍是无穷小（求 sin(1/x)·x² 型极限的利器）。注意「有限个」这个限定——无限个无穷小之和可能是任何东西。常数里只有 0 能叫无穷小。",
+  "无穷大": "无穷大是绝对值无限增大的变量，同样不是一个很大的数。重要结论：同一过程下，无穷大的倒数是无穷小；但无穷小的倒数是无穷大只在「f(x) ≠ 0」时成立。∞ 不参与四则运算的随意组合：∞ − ∞、∞·0、1^∞ 等都是「未定式」，要化简后处理。无穷大一定无界，但无界不一定是无穷大（如 x·sin x 在 x→∞ 时无界但来回振荡）。",
+  "倒数关系": "同一变化过程下：若 f(x) → ∞ 则 1/f(x) → 0（无穷大倒数为无穷小）；若 f(x) → 0 且 f(x) ≠ 0，则 1/f(x) → ∞（无穷小倒数为无穷大）。这是「化无穷大为无穷小来处理」的理论依据，很多 ∞ 型极限先取倒数变成 0 型再算。注意条件 f(x) ≠ 0：比如 x·sin(1/x) 中 sin(1/x) 在 x→0 过程中有零点，就不能直接对它取倒数。",
+  "四则运算法则": "极限四则的前提：参加运算的每个极限都「存在」（有限值），且分母极限不为 0。所以遇到 0/0、∞/∞、∞−∞、0·∞、1^∞ 先别急着拆，必须先化简（约分、有理化、等价替换、通分）变成各部分极限存在再拆。经典错误：lim_{x→2} (x²+x)/(x²−x) 直接上下约去 x——约分是对的，但要说清 x→2 时 x ≠ 0 才能约；若 x→0 就要小心。加减法里「主导项」思维：∞−∞ 型先通分或有理化提取最高次。",
+  "重要极限一": "lim_{x→0} sin x / x = 1。使用特征：式子里有「三角函数 / 相同的自变量」。核心变形是凑：sin kx / x = k · sin kx/(kx) → k。三个常用推论：x → 0 时 tan x / x → 1、arcsin x / x → 1、arctan x / x → 1（本质都是等价无穷小 sin x ~ x 的变形）。注意 1 − cos x ~ x²/2 是「平方级」无穷小，不是一次的。",
+  "重要极限二": "lim_{x→∞} (1 + 1/x)^x = e，等价形式 lim_{α→0} (1 + α)^{1/α} = e。它的本质是 (1 + 无穷小)^{无穷大} 结构。使用口诀「一凑、二倒、三取指数」：凑出 (1 + 无穷小)^{1/无穷小} 的标准形，指数部分单独求极限。比如 lim (1 + 2/x)^x = lim [(1 + 2/x)^{x/2}]² = e²。这个极限是 e 的定义来源，连续复利、银行计息的数学模型。",
+  "1^∞ 套路": "标准流程三步：① 判型——确认底数 → 1、指数 → ∞；② 凑标准形——把式子写成 (1 + α)^{β}，其中 α 是无穷小、β 是无穷大，关键是把底数凑成 1 + α；③ 套公式——原式极限 = e^{lim α·β}。例：lim (cos x)^{1/x²}，cos x = 1 + (cos x − 1)，α = cos x − 1 ~ −x²/2，α·β = −1/2，答案 e^{−1/2}。替代方案：取对数法（e^{ln 原式}）万能但稍慢。",
+  "阶的定义": "以 x → 0 为例（x → ∞ 同理）：若 lim β/α = 0，β 是 α 的高阶无穷小，记 β = o(α)；若 lim β/α = c ≠ 0，同阶；若 c = 1，等价，记 α ~ β。k 阶无穷小：lim β/x^k = c ≠ 0。记忆表：x→0 时 sin x ~ x，tan x ~ x，arcsin x ~ x，1 − cos x ~ x²/2，ln(1+x) ~ x，e^x − 1 ~ x，(1+x)^α − 1 ~ αx。阶的本质是「消失速度」的快慢等级。",
+  "等价替换定理": "乘除因子可以整体替换：lim (f·g)/h 中 f ~ f′ 时可把 f 换成 f′。两个天条：① 只能替换「乘除因子」，加减项原则上不能随意替换——经典反例 lim_{x→0} (tan x − sin x)/x³：把 tan、sin 都换成 x 得 0，错了；正确做法 tan x − sin x = tan x·(1 − cos x) ~ x·x²/2，答案 1/2；② 替换后必须保证剩下的式子极限存在。进阶：加减时若知道「两件事不同阶」也可以换（如 x 与 x² 相加减）。",
+  "连续的定义": "三层递进：① 增量形式 lim Δy = 0；② 极限形式 lim_{x→x₀} f(x) = f(x₀)，即「极限值 = 函数值」；③ ε–δ 形式。分解出三个条件：有定义、极限存在（左右相等）、极限等于函数值——三个缺一即间断。连续函数的图像「一笔画」。这个定义把极限工具接到了函数性质上：f(x₀) 能直接代入的前提就是连续。",
+  "第一类间断点": "左右极限都存在的间断点。两个子类：可去间断点（左右极限相等但不等于函数值，或该点无定义）——修一个点就能补好，如 sin x / x 在 x = 0；跳跃间断点（左右极限存在但不相等）——图像「跳台阶」，如 sgn(x) 在 0 处。判定流程：先求左极限，再求右极限，然后对比。含 e^{1/x}、arctan(1/x) 的函数在 x = 0 处必查左右。",
+  "第二类间断点": "左右极限至少有一个不存在。两个子类：无穷间断点（如 tan x 在 π/2 处、1/x 在 0 处）；振荡间断点（如 sin(1/x) 在 0 处，无限震荡）。判定时若左右极限有一个是 ∞，归为无穷间断点；若极限不存在又不是 ∞（在两个值之间永远震），归为振荡。含 1/x 的复合三角函数是出题最爱。",
+  "运算定理": "连续函数四则运算后仍连续（分母非零）、连续函数的复合仍连续（内层连续 + 外层在该点连续）。用途巨大：把「初等函数在定义区间内连续」与「复合连续」组合起来，一切「代入型」求极限都被合法化。反过来说：求极限出问题时，往往就是连续性在这点断了——于是转入分类讨论间断点。",
+  "复合函数极限": "若 lim_{x→x₀} g(x) = u₀ 且 lim_{u→u₀} f(u) = A，则 lim_{x→x₀} f(g(x)) = A（外加条件：g 在附近不取 u₀ 或 f 在 u₀ 连续）。实战意义：换元求极限合法化——令 u = g(x) 后对 u 求极限即可，不用管次序。配合「初等函数连续」：lim_{x→0} e^{sin x / x} = e^{lim sin x / x} = e¹ = e，指数可以直接「穿」进极限里。",
+  "初等函数连续性": "一切初等函数在其定义区间内连续。这条定理的实战价值：① 求初等函数极限 = 直接代入，lim_{x→1} (x² + ln x) = 1 + 0 = 1；② 找间断点 = 找「无定义点」，对初等函数只需检查分母为零、ln 里为零、开偶次方为负的点；③ 连续 + 复合 = 极限符号可穿过函数符号，是 1^∞ 套路里取指数的理论依据。",
+  "最值定理": "闭区间上连续函数必能取得最大值 M 与最小值 m。两个条件都是刚需：闭区间（不能是开的——y = x 在 (0,1) 上取不到最值）与连续（不能有间断——y = 1/x 在 [−1,1] 间断就没最值）。用途：① 证明有界性（m ≤ f(x) ≤ M）；② 与介值/零点定理连用证明方程根的存在性；③ 最值应用题的理论保障。",
+  "零点定理": "f 在 [a,b] 连续且 f(a)·f(b) < 0（两端异号），则至少存在 ξ ∈ (a,b) 使 f(ξ) = 0。几何：从水下走到水上，必经过水面。证明方程有根的标配流程：① 构造辅助函数 F(x) = 左边 − 右边；② 找两个端点使函数值异号（常取 0、1、±1 试探）；③ 套定理下结论。若还要证「唯一」，再补一条 F 在区间上单调（导数恒正/负）。",
+  "介值定理": "闭区间连续函数可以取到最小值 m 与最大值 M 之间的任何值 C。与零点定理等价（对 F(x) = f(x) − C 用零点定理即可）。经典应用：证明存在 ξ 使 f(ξ) = 某个指定值，或者证明 f(x₁) 与 f(x₂) 之间的中值被取到。和最值定理连用可以一次证明「取遍 [m, M] 的每个值」。",
+  "导数定义": "f'(x₀) = lim_{Δx→0} [f(x₀+Δx) − f(x₀)] / Δx，等价写法 lim_{x→x₀} [f(x) − f(x₀)] / (x − x₀)。考试三大用法：① 抽象函数给「差商极限」求导数——认结构：分子是函数值差，分母是自变量差，且分母趋 0；② 定义式的变形——Δx 换成 h、2h、−h 都行，只要分子分母「配比一致」；③ 分段函数分界点必须用定义求导（导数公式不保证适用于分界点）。左右导数都存在且相等才可导。",
+  "几何意义": "f'(x₀) 是曲线在点 (x₀, f(x₀)) 处切线的斜率，切线方程 y = f(x₀) + f'(x₀)(x − x₀)，法线斜率 = −1/f'(x₀)。注意：切线是「割线的极限位置」，不是「过两点的线」。可导 ⇔ 切线存在（斜率有限）；连续但不可导的点可能有垂直切线（如 |x| 在 0 处是「尖角」，y = ∛x 在 0 处切线垂直）。真题爱考：给一张函数图像，判断哪些点可导。",
+  "可导与连续": "可导 ⇒ 连续（用定义直接证：Δy = (Δy/Δx)·Δx → 0·0）；连续 ⇏ 可导（反例 |x| 在 0 连续但左右导数不等）。一句话：可导是连续的充分条件，连续是可导的必要条件。经典不可导清单：|x| 型尖点、∛x 型垂直切线、分段函数不衔接点。判断顺序：先看连不连续，不连续必不可导；连续再算左右导数。",
+  "莱布尼茨公式": "(uv)^{(n)} = Σ C(n,k)·u^{(n−k)}·v^{(k)}，形式与二项式定理一模一样——u 的幂降、v 的幂升。最佳使用场景：求 (x²·e^x)^{(n)} 这类「多项式 × 指数/三角」的 n 阶导数，因为多项式求高阶导会变成 0，级数自动截断。注意：u 通常取多项式（导几次就没了），v 取 e^x、sin x、cos x 这类「永远导不完但周期循环」的函数。",
+  "隐函数求导": "方程 F(x, y) = 0 确定的 y(x) 不必解出来，两边直接对 x 求导——遇到 y 就把它看成 y(x)（复合！），求导后带 y'，最后解出 y'。例：x² + y² = 1，2x + 2y·y' = 0，y' = −x/y。进阶：求 y'' 时把 y' 的表达式再求导，中间出现的 y' 用第一步结果代入。易错点：e^y 对 x 求导是 e^y·y'，不是 e^y；ln y 求导是 y'/y。",
+  "对数求导法": "适用两类函数：① 幂指函数 u(x)^{v(x)}（底和指数都在变，如 x^x、(1+1/x)^x）——先两边取 ln：ln y = v·ln u，再求导 y'/y = v'·ln u + v·u'/u，解出 y'；② 多因子乘除开方的函数——取对数把乘除变加减、乘方变系数，求导省力。核心思想：把「指数上的变量」拉下来变成乘积，才能用普通求导法则。",
+  "参数方程求导": "x = φ(t), y = ψ(t) 时：一阶 dy/dx = ψ'(t)/φ'(t)（两个分别对 t 求导再相除）。二阶不能直接再除一次！正确公式：d²y/dx² = d(dy/dx)/dt ÷ φ'(t)——即把一阶结果再对 t 求导，然后除以 φ'(t)。高频错误就是「上下各自求二阶再相除」。记忆：对 x 求导 = 先对 t 求导、再除以 dx/dt，二阶同样如此。",
+  "微分的定义": "若 Δy = A·Δx + o(Δx)（A 与 Δx 无关），则称 f 在 x₀ 可微，线性主部 A·Δx 就是微分 dy = f'(x₀)Δx。对自变量 x 规定 dx = Δx，于是 dy = f'(x)dx——这就是「把导数当分数写」的合法性来源（dy/dx 真的可以拆）。可微 ⇔ 可导。近似计算公式：f(x₀+Δx) ≈ f(x₀) + f'(x₀)Δx，如 √4.02 ≈ 2 + 0.02/(2·2) = 2.005。",
+  "罗尔定理": "条件三条：[a,b] 连续、(a,b) 可导、f(a) = f(b)。结论：存在 ξ 使 f'(ξ) = 0。几何：两端等高的连续光滑曲线必有水平切线。应用套路：证明 f'(ξ) = 0 → 对 f 用罗尔；证明 f''(ξ) = 0 → 对 f' 用罗尔（需找 f' 两端等值，常由两次罗尔提供）；证明含 ξ 的等式 → 构造辅助函数（常见于乘 e^{g(x)} 凑成导数形式）。注意验证条件是采分点，三条缺一不可。",
+  "拉格朗日中值定理": "罗尔定理去掉「两端等值」的推广：f(b) − f(a) = f'(ξ)(b − a)。几何：至少有一条切线平行于连接两端点的弦。两大用法：① 等式证明——把要证的式子凑成「函数值差 = 导数 × 区间长」结构，选对 f 和区间是关键；② 不等式——由 m ≤ f'(ξ) ≤ M 放缩出 f(b) − f(a) 的范围。推论：f' ≡ 0 ⇒ f 为常数（常用于证明两个函数只差常数）。",
+  "柯西中值定理": "两个函数一起用：[f(b) − f(a)] / [g(b) − g(a)] = f'(ξ)/g'(ξ)，g'(x) ≠ 0 且 g(b) ≠ g(a)。它是拉格朗日的推广（取 g(x) = x 就退化回去）。专属场景：证明「两个函数值差之比 = 导数之比」型命题，特别是分式且分子分母是不同函数的差。构造辅助函数时经常用「待定常数法」：把 ξ 换成 x，把等式整理成便于求导的形式。",
+  "法则条件（三条缺一不可）": "洛必达三条件：① 0/0 或 ∞/∞ 未定式；② 分子分母在去心邻域内可导且分母导数不为 0；③ lim f'/g' 存在（或为 ∞）。反面教材：lim_{x→∞} (x + sin x)/x，用洛必达得 lim (1 + cos x)/1 不存在，但原极限 = 1——条件 ③ 不满足时洛必达失效，不代表原极限不存在！高频提醒：每用一次都要重新验型（可能从 0/0 变成别的）；能化简先化简（等价替换 + 提出非零因子），洛必达是最后手段。",
+  "泰勒公式": "带佩亚诺余项：f(x) = Σ f^{(k)}(x₀)/k! · (x−x₀)^k + o((x−x₀)ⁿ)。本质：用多项式局部逼近函数。必背五个展开（x→0）：e^x、sin x、cos x、ln(1+x)、(1+x)^α。实战：求极限时「上下同阶」原则——分母是 x³ 就把分子展到 x³ 项；判断极值/凹凸也用它。与洛必达的关系：泰勒能处理洛必达失效的抽象函数极限（题目只给 f 在某点的信息时，泰勒是唯一武器）。",
+  "单调性判定": "f'(x) > 0 → 严格递增；< 0 → 递减。注意区间内「有限个孤立点导数为 0」不影响单调性（如 y = x³ 在 0 处）。应用两板斧：① 证不等式——移项构造 F(x)，验证 F(a) ≥ 0（端点值）+ F'(x) > 0，得 F(x) ≥ F(a)；② 讨论含参函数的单调区间——解不等式 f'(x) > 0 时必须讨论参数。答题最后要列表呈现：x 范围、f' 符号、f 走势。",
+  "凹凸性与拐点": "凹凸用 f'' 判：f'' > 0 凹（∪，像碗），f'' < 0 凸（∩，像伞）。拐点 = 凹凸性发生改变的点，判定：f'' = 0 且两侧 f'' 变号（f'' = 0 但不变号不是拐点，如 y = x⁴ 在 0）。与二阶导数的关系是考试核心：给 f'' 图像 → 数符号变化次数 → 拐点个数。拐点必须给出坐标 (x₀, f(x₀))，只说 x₀ 不完整。",
+  "必要条件": "极值点必要条件：可导点取极值 ⇒ f'(x₀) = 0（驻点）。两个易混概念：驻点（导数为零的点）不一定是极值点（y = x³ 在 0）；极值点不一定是驻点（|x| 在 0 不可导但取极小）。所以找极值 = 驻点 + 不可导点，再逐个用充分条件检验。极值是「局部」概念，最值是「全局」概念，一个区间可以有多个极值但最值唯一。",
+  "两个充分条件": "第一充分条件：f' 在 x₀ 两侧变号（左正右负 → 极大；左负右正 → 极小），适用于不可导点。第二充分条件：f'(x₀) = 0 且 f''(x₀) > 0 → 极小（碗底），f''(x₀) < 0 → 极大（伞顶）；f''(x₀) = 0 时失效，退回第一条件。选择建议：给了解析式用第二条件快；含不可导点或 f'' 也为零时用第一条件。答题格式：列表展示 x、f'、f'' 的符号变化。",
+  "最值求法": "闭区间 [a,b] 上连续函数最值 = 比较三类点的函数值：① 区间内所有驻点；② 所有不可导点；③ 两个端点。不用判断是不是极值，全部算值比大小即可——这是与求极值最大的流程区别。应用题（几何最值）流程：设变量 → 建目标函数 → 写定义域 → 求驻点 → 说明是最大/最小（用第二充分条件或实际意义）。开区间连续函数可能无最值，应用题里常用「实际意义保证最值存在 + 驻点唯一」来下结论。",
+  "近似计算": "微分近似计算的公式：f(x₀ + Δx) ≈ f(x₀) + f'(x₀)·Δx。选点的诀窍——x₀ 取「函数好算的值」（如 √4.02 选 x₀ = 4），Δx 是「小偏差」。常用卡：√(1+x) ≈ 1 + x/2、(1+x)^α ≈ 1 + αx、sin x ≈ x、ln(1+x) ≈ x、e^x ≈ 1 + x（都是泰勒展开取一次项）。误差来源是被扔掉的 o(Δx) 项，Δx 越小越准。",
+  "一阶微分形式不变性": "无论 u 是自变量还是中间变量，dy = f'(u)du 永远成立。这就是「凑微分」的理论基础：看到 du 的一部分就往 f'(u)du 上凑。例：∫2x·e^{x²}dx，令 u = x²，2x dx = du，积分变成 ∫e^u du。链式法则的积分版，两者配合是积分学的发动机。",
+  "第一类换元（凑微分）": "核心动作：把被积函数里的一段连同 dx 凑成新变量的微分。常用凑法清单：x dx = ½d(x²)、dx/√x = 2d(√x)、e^x dx = d(e^x)、cos x dx = d(sin x)、dx/x = d(ln|x|)、dx/(1+x²) = d(arctan x)。流程：观察 → 凑 → 换元 → 积分 → 回代。练熟后可以「心算换元」直接写结果。口诀：凑微分，找一半。",
+  "第二类换元": "三大场景：① 三角换元去根号——√(a²−x²) 令 x = a·sin t；√(a²+x²) 令 x = a·tan t；√(x²−a²) 令 x = a·sec t；② 根式换元——令 t = 整个根式，把无理变有理；③ 倒代换 x = 1/t——处理分母幂次高的分式。纪律：换元必须同时换 dx 与积分限，算完要回代（三角换元常借辅助三角形回代）。",
+  "循环型": "形如 ∫e^x·sin x dx 的「循环型」积分：分部积分两次后会绕回原积分，此时把原积分当未知数解方程。要点：两次分部中 u 的选取必须「同类轮换」（第一次取三角函数当 u，第二次还得取三角函数），如果中途换了方向就会绕回起点白干。移项时注意系数：绕回来的是 −k·I，解出 I = 原式/(1+k)。",
+  "性质": "不定积分基本性质：∫F'(x)dx = F(x) + C、(∫f dx)' = f——积分与求导互为逆运算（差个常数 C）。线性性：和差的积分 = 积分的和差、常数因子可提出。基本积分表必须滚瓜烂熟：x^μ、1/x、e^x、sin、cos、sec²、1/(1+x²)、1/√(1−x²) 等，它们是所有凑微分的原材料。检查积分结果对不对：对结果求导，看是否回到被积函数。",
+  "变限积分求导": "若 Φ(x) = ∫_a^x f(t)dt 且 f 连续，则 Φ'(x) = f(x)——变上限积分是被积函数的一个原函数。推广（链式）：d/dx ∫_a^{φ(x)} f(t)dt = f(φ(x))·φ'(x)；上下限都有：代入上限减去下限再各乘链式因子。这是连接积分与极限的桥：∫_0^x 型的 lim 题目先用此定理化成洛必达或等价替换。易错：被积函数里含 x 时必须先把 x 移出积分号（换元或拆分）才能求导。",
+  "牛顿-莱布尼茨公式": "∫_a^b f(x)dx = F(b) − F(a)，F 是 f 的任意一个原函数。它是微积分的核心定理：把「无穷分割求和」的定积分变成「找原函数 + 代入端点」，计算量断崖式下降。使用前提：f 在 [a,b] 上连续（或可积且 F 存在）。经典反例提醒：∫_{−1}^{1} (1/x²)dx 直接套公式得负数是错的——1/x² 在 0 处无界不满足条件。原函数不唯一，差个常数，相减时消掉。",
+  "微元法": "定积分应用的通用思路：① 选好坐标系、确定积分变量 x 与范围 [a,b]；② 在小区间 [x, x+dx] 上「以常代变」写出微元 dQ = f(x)dx（这就是被积表达式）；③ 积分求和。求面积、体积、弧长、变力做功、液体压力全是这一套。关键在微元找得对：面积取竖条 dA = (上 − 下)dx、体积取薄片 dV = π·半径²dx。",
+  "面积": "直角坐标求面积：X 型区域 ∫_a^b (上曲线 − 下曲线) dx；Y 型区域 ∫ (右 − 左) dy。曲线相交时先解方程找交点确定积分限；上下关系会交换的要分段（如两曲线交叉）。极坐标面积 S = ½∫_α^β r²(θ)dθ（扇形微元拼接）。技巧：利用对称性减半计算——偶函数、圆的对称都可省一半功夫。",
+  "旋转体体积": "绕 x 轴旋转：圆盘法 V = π∫_a^b [f(x)]² dx（薄片是圆）。绕 y 轴旋转两套方法：① 圆盘法（对 y 积分）π∫ [g(y)]² dy；② 柱壳法 V = 2π∫_a^b x·|f(x)| dx（剥洋葱皮，免反解）。选法原则：看哪条曲线好反解。易错：曲线与 x 轴之间的区域旋转 vs 两曲线之间旋转（用大平方减小平方 π∫(R² − r²)dx，不是 π∫(R−r)²dx）。",
+  "可分离变量": "dy/dx = f(x)·g(y) 型：把 y 全挪左边、x 全挪右边 → dy/g(y) = f(x)dx → 两边积分 + C。这是最基础的解法，一切其他类型的最后一步往往都归到它。易错点：① 分离时除以 g(y) 会丢失 g(y) = 0 的常值解（如 y² = 1 的 y = ±1），要补上；② 加 C 的时机——两边积完分立刻加，不要等化简完。",
+  "齐次方程": "dy/dx = φ(y/x) 型（右边只依赖比值 y/x）：令 u = y/x（即 y = ux），则 dy/dx = u + x·du/dx，代入后变成可分离变量方程 u + x·du/dx = φ(u)。解出 u 后用 y = ux 回代。判定方法：分子分母各项次数齐平（都是一次或都是二次）。同类的还有可化为齐次的 (ax+by+c) 型，先平移消常数。",
+  "一阶线性方程": "标准形 y' + P(x)y = Q(x)。解法：公式法 y = e^{−∫P dx}·(∫Q·e^{∫P dx}dx + C)。原理是常数变易法：先解对应的齐次方程得 C·e^{−∫P}，把常数 C 换成函数 C(x) 代入原方程求出它。识别要点：y 的系数和自由项都只是 x 的函数、y 是一次的。注意贝努利方程 y' + Py = Qyⁿ 先除以 yⁿ 换元降为一阶线性。",
+  "特征方程法": "二阶常系数齐次 y'' + py' + qy = 0：写出特征方程 r² + pr + q = 0，按判别式给解：两个不同实根 r₁ ≠ r₂ → y = C₁e^{r₁x} + C₂e^{r₂x}；重根 r → y = (C₁ + C₂x)e^{rx}；共轭复根 α ± βi → y = e^{αx}(C₁cos βx + C₂sin βx)。口诀：实根开方、重根乘 x、复根带三角。这套猜 y = e^{rx} 的来源：指数函数求导只差系数。",
+  "解的结构": "线性方程解的三条结构定理：① 齐次方程两解之和、解乘常数仍是解（解构成线性空间）；② 非齐次通解 = 对应齐次通解 + 非齐次一个特解（通解 = 齐通 + 非齐特）；③ 叠加原理：右端 = f₁ + f₂ 时可拆成两个方程分别求特解再相加。考试用法：题目给三个解，用「两解之差是齐次方程的解」来反推通解结构。",
+  "特解的设法": "非齐次项 f(x) = e^{λx}P_m(x) 时特解设 y* = x^k·e^{λx}·Q_m(x)：Q_m 是同次多项式（系数待定），k 按λ 是特征方程根的重数取 0、1、2（不是根取 0，单根取 1，重根取 2）。f(x) = e^{λx}[P·cos ωx + Q·sin ωx] 时设 y* = x^k·e^{λx}[A·cos ωx + B·sin ωx]，k 看λ ± ωi 是否特征根。设完代入方程比系数——待定系数法的全部秘密在「设得对」。",
+  "偏导数": "多元函数固定其他变量、只对一个变量求导：∂f/∂x = lim_{Δx→0} [f(x+Δx, y) − f(x,y)]/Δx。求法：把其他变量当常数，用一元求导法则。几何：∂f/∂x(x₀,y₀) 是曲面被平面 y = y₀ 截出的曲线在该点的切线斜率。高阶偏导混合求导次序可交换（二阶偏导连续时 f_xy = f_yx）。易错：∂²z/∂x∂y 表示先对 y 后对 x（或按教材约定，读题时看清记号）。",
+  "可微与全微分": "全增量 Δz = A·Δx + B·Δy + o(ρ)（ρ = √(Δx²+Δy²)）时称可微，dz = A·Δx + B·Δy = (∂z/∂x)dx + (∂z/∂y)dy。关系链：偏导连续 ⇒ 可微 ⇒ 偏导存在；可微 ⇒ 连续。注意多元世界里「偏导存在」很弱（只保证两条十字线上 behaves），不能推出连续。判断可微的标准流程：先算两个偏导 → 验证 lim Δz − (偏导·增量) / ρ 是否为 0。",
+  "关系链（多元与一元大不同）": "一元：可导 ⇔ 可微，连续 ⇐ 可导。多元：偏导存在 ⇏ 连续、偏导存在 ⇏ 可微；可微 ⇒ 连续 + 各偏导存在；偏导连续 ⇒ 可微。这条链是考研选择题的常客，记忆图：偏导连续是最强条件，可微居中，偏导存在最弱。反向都不成立，每条「⇏」都要能举出反例（如 f(x,y) = xy/(x²+y²) 在原点偏导存在但不连续）。",
+  "链式法则": "z = f(u,v)，u、v 又是 x、y 的函数时：∂z/∂x = ∂z/∂u·∂u/∂x + ∂z/∂v·∂v/∂x——「连线相乘、分线相加」。画「树形图」：z 分叉到 u、v，u、v 再分叉到 x、y；求 z 对 x 的导数 = 沿每条从 z 到 x 的路径，把路径上各段导数相乘，再把所有路径相加。全微分形式不变性：dz = (∂z/∂u)du + (∂z/∂v)dv 无论 u、v 是自变量还是中间变量都成立。",
+  "全导数": "z = f(u, v) 而 u、v 都只是 t 的一元函数时，z 实际是 t 的一元函数：dz/dt = (∂z/∂u)·u'(t) + (∂z/∂v)·v'(t)。因为只有一条自变量链，全用 d 不用 ∂。应用：求参数曲线 z(t) 的变化率、隐函数求导的推导。易错：这类题里 f 对 u、v 仍是偏导（f 本质是二元函数），写成全导符号 dz/du 是错的。",
+  "几何意义与直角坐标": "二重积分 ∬_D f dσ 在几何上是「曲顶柱体」的体积（f ≥ 0 时）：底是区域 D，顶是曲面 z = f(x,y)。直角坐标下 dσ = dx dy，先对 y 积分（X 型）：∫_a^b dx ∫_{y₁(x)}^{y₂(x)} f dy——积分限必须「下限 ≤ 上限」且外层是常数。定限口诀：后积先定限（外层是常数区间），限内画条线（平行坐标轴穿区域），先交写下限，后交写上限。",
+  "交换积分次序": "给一个先 y 后 x 的累次积分，要求改成先 x 后 y：① 由现有积分限画出区域 D 的图（这一步不能省！）；② 重新用另一个方向的「穿线法」定限。价值：有些次序积不出来（原函数不是初等函数，如 ∫e^{−y²}dy），换序后秒杀。易错：换序不是把符号互换那么简单，积分限函数要按新方向重写，端点常数与函数限的角色互换。",
+  "极坐标": "被积函数含 x²+y²、区域是圆/扇/环时转极坐标：x = r cos θ, y = r sin θ，dσ = r dr dθ（千万别丢 r！）。定限：θ 扫过的范围 + r 从内曲线到外曲线。经典：整个单位圆上的 ∬e^{x²+y²}dσ，直角坐标积不出，极坐标 ∫dθ∫ r·e^{r²}dr 秒解。对称性：圆域上奇偶函数可减半。",
+  "投影法（先一后二）": "∫∫∫_Ω f dV：把立体向 xOy 面投影得区域 D，先沿 z 积分（下曲面到上曲面），再在 D 上二重积分：∬_D dz ∫_{z₁(x,y)}^{z₂(x,y)} f dz。适用：投影区域好写、上下曲面 z = z(x,y) 明确。三步定限：投影找 D → 穿线定 z 限 → D 上二重积分。与「先二后一」互为对偶，按立体形状选。",
+  "截面法（先二后一）": "用水平面 z = z₀ 切立体，截面面积 A(z) 已知或好算时：V = ∫_{c₁}^{c₂} dz ∬_{D(z)} f dσ，先在截面 D(z) 上二重积分，再对 z 积分。王牌场景：被积函数只含 z（如 ∬∫ z²dV），截面是圆/规则图形——内层二重积分直接 = f(z)·A(z)，三重积分瞬间变一元定积分。旋转体立体优先考虑此法。",
+  "柱面与球面坐标": "柱面坐标 = 极坐标 + z：x = r cosθ, y = r sinθ, z = z，dV = r dr dθ dz，适合「圆柱形、旋转体」区域。球面坐标：x = r sinφ cosθ, y = r sinφ sinθ, z = r cosφ，dV = r² sinφ dr dφ dθ，适合「球、锥、球缺」区域（r 到球面、φ 从正轴量起）。记忆：柱面坐标的 r 是到 z 轴的距离，球面坐标的 r 是到原点的距离；两个 Jacobian 不同，dV 里的因子别背混。",
+  "定义与物理意义": "对弧长的曲线积分 ∫_L f(x,y) ds：把曲线当「有质量的丝线」，f 是线密度，积分 = 总质量。ds 是弧长微元（恒正，与方向无关）。计算法：曲线参数化后代入 + ds = √(x'² + y'²)dt，化成定积分，下限必须小于上限（弧长不倒着走）。对称性与重积分类似：曲线关于轴对称 + 函数奇偶可化简。",
+  "计算法（参数化）": "三类参数化：① 一般参数 x = φ(t), y = ψ(t)，ds = √(φ'² + ψ'²)dt；② y = y(x) 视作 x 为参数；③ 极坐标 r = r(θ)，ds = √(r² + r'²)dθ。流程：参数化 → 全部换成 t → 定上下限（下小上大）→ 普通定积分。易错：ds 里漏了根号；圆用极坐标参数化比直角坐标省一倍力气。",
+  "有向曲面": "对坐标的曲线/曲面积分与「方向」有关：曲线积分取「有向弧元」dy、dx 等，方向反了积分变号；曲面积分取「有向曲面元」dy dz、dz dx、dx dy，与曲面所取的侧（法向量方向）有关。封闭曲线用格林/斯托克斯时要注意方向约定（格林：沿边界走，区域在左手边为正方向）。方向性是与第一类积分（弧长/面积分）最大的区别。",
+  "直接投影法": "对坐标的曲面积分 ∬_Σ R(x,y,z) dxdy 的投影法：把曲面写成 z = z(x,y)，投影到 xOy 面得 D_xy，∬_Σ R dxdy = ±∬_{D_xy} R(x, y, z(x,y)) dxdy——上侧取 +、下侧取 −（法向量与 z 轴夹角决定）。三个积分（dxdy、dydz、dzdx）分别投影到对应坐标面，符号各按法向量与对应轴的夹角来定。易错：垂直于某坐标面的部分在该面的投影为零，直接不贡献。",
+  "格林公式": "闭区域 D 边界 L（正向：沿 L 走区域在左手边）上：∮ P dx + Q dy = ∬_D (∂Q/∂x − ∂P/∂y) dxdy。作用：把难算的线积分变成二重积分（或反过来）。注意三件事：① L 必须封闭——不封闭就补一条线（补线积分减回去）；② 方向取负时要变号；③ P、Q 在 D 内处处有一阶偏导——挖洞型（如 1/x 分母奇点）要「挖洞」处理。求平面面积公式：A = ½∮(−y dx + x dy)。",
+  "平面面积公式": "由格林公式推出来的面积公式：A = ½∮_L (x dy − y dx)（正向边界）。变形还有 A = ∮ x dy = −∮ y dx。用途：已知边界曲线的参数方程时，直接一个线积分算面积——椭圆面积 πab 就这么来的（x = a cos t, y = b sin t）。它也常作为「验证格林公式」的练习题：算右端二重积分应等于面积。",
+  "积分与路径无关的四个等价条件": "在单连通区域内：① ∫_L P dx + Q dy 与路径无关；② 存在 u(x,y) 使 du = P dx + Q dy（P dx + Q dy 是全微分）；③ ∂P/∂y ≡ ∂Q/∂x；④ 对任意闭曲线积分恒为 0。四条等价、知一推三。应用：路径无关时选「折线」计算（水平+竖直段），或求原函数 u：一组偏导数积分 + 对另一变量求偏导定常数。挖洞（复连通）时结论要加条件。",
+  "原函数法（全微分求积）": "验证 ∂P/∂y = ∂Q/∂x 后求 u(x,y) 使 du = P dx + Q dy 的流程：① u = ∫P dx（把 y 当常数），积分常数写成 φ(y)；② 对 y 求偏导与 Q 比对，解出 φ'(y)，积分定 φ(y)；③ u 就是原函数，∫_A^B P dx + Q dy = u(B) − u(A)——曲线积分变成了「牛顿-莱布尼茨」。这是路径无关类题的最快解法，比折线法还优雅。",
+  "收敛的定义与必要条件": "级数 Σaₙ 收敛 ⇔ 部分和数列 Sₙ 有极限。必要条件：aₙ → 0——常用来「快速排除」：通项不趋于 0 的级数必发散（如含 n!、nⁿ 增速的通项）。但它只是必要：aₙ → 0 不保证收敛，反例调和级数 Σ1/n（通项 → 0 却发散到 ∞）。理解本质：级数就是「无穷项相加」，一切讨论都回归部分和数列的极限。",
+  "交错级数与绝对收敛": "莱布尼茨判别法：交错级数 Σ(−1)^{n−1}uₙ（uₙ > 0）满足 uₙ 单调递减 + uₙ → 0，则收敛，且和 S ≤ u₁（余项估计 |Rₙ| ≤ u_{n+1}）。绝对收敛：Σ|aₙ| 收敛 → Σaₙ 收敛（且更「结实」：可换序）；条件收敛：Σaₙ 收敛但 Σ|aₙ| 发散（如交错调和级数）。判别顺序：先看通项 → 正项级数用比较/比值/根值 → 交错用莱布尼茨 → 分类绝对/条件。",
+  "收敛半径": "幂级数 Σaₙxⁿ 的收敛域是以 0 为中心的区间：收敛半径 R 由 lim|a_{n+1}/aₙ| = 1/R（或 1/√[n]{|aₙ|}）确定；端点 x = ±R 单独用数项级数审敛法判。收敛域 = (−R, R) 并上收敛的端点。幂级数的和函数在收敛区间内连续、可逐项求导/积分（半径不变，端点另行讨论）——这两条是「间接展开法」的引擎。",
+  "间接展开法（主力方法）": "从已知展开出发，通过变量代换、逐项求导 / 逐项积分（收敛半径不变，端点另行判定）得到目标展开。比直接算泰勒系数快得多。已知武器库：1/(1−x) = Σxⁿ、e^x = Σxⁿ/n!、sin x、cos x、ln(1+x)、(1+x)^α。心法：把目标函数往已知展开上「整形」——提常数、换元（x → x²、−x/2）、乘除 x、求导积分。五 expansions 烂熟于心，考场十分钟一道大题。"
+};
 
 /* ================================================================
  *  存储层（localStorage）
@@ -2491,6 +2568,33 @@ function textWithMarks(raw, mk){
   return html;
 }
 function marksFor(bk){ return marks[bk] || []; }
+
+/* ================================================================
+ *  公式书面体：把文本里的公式片段自动包上数学衬线排版
+ *  只影响显示，不改变字符本身 → 划词高亮定位不受影响
+ * ================================================================ */
+function mathify(escapedHtml){
+  // 拆出 <mark> 标签，只对纯文本片段做公式识别
+  return escapedHtml.split(/(<mark[^>]*>|<\/mark>)/).map(seg=>{
+    if(!seg || seg.startsWith("<mark")) return seg;
+    // 公式候选片段：连续的 ASCII/数学符号（中文会自然截断片段）
+    return seg.replace(/[\x21-\x7E√∑∫∇∆∞→←↔∈≤≥≠≈±·×÷μαβγδθλφψωΩΠΣΦΩ]{2,}/g, run=>{
+      // 至少含一个公式特征符才认定为公式，普通英文单词原样保留
+      if(!/[=^_√∑∫≤≥≠≈→←∈|]/.test(run)) return run;
+      const lead = run.match(/^\s*/)[0], trail = run.match(/\s*$/)[0];
+      let r = run.trim();
+      // 上标：x^{n+1} 或 x^2
+      r = r.replace(/\^\{([^{}]+)\}/g, '<sup>$1</sup>');
+      r = r.replace(/\^([A-Za-z0-9])/g, '<sup>$1</sup>');
+      // 下标：a_{n+1} 或 a_1
+      r = r.replace(/_\{([^{}]+)\}/g, '<sub>$1</sub>');
+      r = r.replace(/_([A-Za-z0-9])/g, '<sub>$1</sub>');
+      // 函数名/极限号用正体（书面规范）
+      r = r.replace(/\b(lim|sin|cos|tan|cot|sec|csc|log|ln|max|min|arcsin|arccos|arctan|sup|inf)\b/g, '<span class="up">$1</span>');
+      return lead + '<span class="math">' + r + '</span>' + trail;
+    });
+  }).join("");
+}
 
 /* ================================================================
  *  视图：首页
@@ -2633,6 +2737,73 @@ let openNoteBlocks = new Set();  // 当前展开批注区的 block
 let lastRevealed = new Set();    // 已展开答案的题
 let penMode = false, penEraser = false, penColor = "#ef4444", penWidth = 4;
 let curStroke = null, lastPt = null, erasing = false;
+
+/* ================================================================
+ *  知识卡片分页：卡片放大后一页放不下，多余的自动进下一页
+ * ================================================================ */
+let pageIdx = 0;
+const PAGE_WEIGHT = 2.6;   // 每页容量（按块的估算高度加权）
+function blockWeight(b){
+  if(!b) return 1;
+  if(b.t === "h") return .5;
+  if(b.t === "concept") return 1.4;
+  if(b.t === "code") return 1.7;
+  if(b.t === "list") return 1.2;
+  if(b.t === "quiz") return 1.4;
+  return 1.1;
+}
+function buildPages(lesson){
+  const pages = [[]];
+  let w = 0;
+  (lesson.blocks||[]).forEach((b,i)=>{
+    const bw = blockWeight(b);
+    if(w + bw > PAGE_WEIGHT && pages[pages.length-1].length){ pages.push([]); w = 0; }
+    pages[pages.length-1].push(i);
+    w += bw;
+  });
+  return pages;
+}
+function pageOfBid(lesson, bid){
+  const idx = parseInt(bid.slice(1), 10);
+  const pages = buildPages(lesson);
+  for(let p=0; p<pages.length; p++) if(pages[p].includes(idx)) return { pages, p };
+  return { pages, p: 0 };
+}
+function pageMove(d){
+  const f = currentOpenLesson(); if(!f) return;
+  const pages = buildPages(f.lesson);
+  const np = pageIdx + d;
+  if(np < 0 || np >= pages.length) return;
+  pageIdx = np;
+  refreshLesson(f.lesson.id, false);
+  window.scrollTo(0, 0);
+}
+function pagerHTML(pages){
+  if(pages.length <= 1) return "";
+  return `<div class="pager">
+    <button onclick="pageMove(-1)" ${pageIdx===0?"disabled":""}>← 上一页</button>
+    <span class="pg-info">第 <b>${pageIdx+1}</b> / ${pages.length} 页</span>
+    <button onclick="pageMove(1)" ${pageIdx===pages.length-1?"disabled":""}>下一页 →</button>
+  </div>`;
+}
+
+/* 画笔圆点光标：笔模式下鼠标处显示一个与笔迹同色同粗的圆点 */
+let penDotEl = null;
+function updatePenDot(e){
+  if(!penDotEl){ penDotEl = document.createElement("div"); penDotEl.id = "penDot"; document.body.appendChild(penDotEl); }
+  const show = penMode && !penEraser && currentView === "lesson"
+            && e && e.target && e.target.id === "drawCanvas";
+  if(!show){ penDotEl.style.display = "none"; return; }
+  const size = Math.max(penWidth, 5);
+  penDotEl.style.width = size + "px";
+  penDotEl.style.height = size + "px";
+  penDotEl.style.background = penColor;
+  penDotEl.style.left = e.clientX + "px";
+  penDotEl.style.top = e.clientY + "px";
+  penDotEl.style.display = "block";
+}
+document.addEventListener("mousemove", updatePenDot);
+
 function renderLesson(cid, lid, focusBlockId){
   const f = findLesson(cid, lid);
   if(!f){ goHome(); return; }
@@ -2641,6 +2812,8 @@ function renderLesson(cid, lid, focusBlockId){
   const { course, chapter, lesson } = f;
   const lk = lessonKey(cid, lid);
   const isDone = !!doneMap[lk];
+  // 进入新课默认第 1 页；从搜索跳转时直接落到目标块所在页
+  pageIdx = focusBlockId ? pageOfBid(lesson, focusBlockId).p : 0;
 
   document.getElementById("app").innerHTML = `
     <div class="crumb">
@@ -2676,8 +2849,13 @@ function renderLesson(cid, lid, focusBlockId){
 }
 function renderBlocksHTML(course, lesson, lid){
   const lk = lessonKey(course.id, lid);
-  let html = "";
-  (lesson.blocks||[]).forEach((b,i)=>{
+  const pages = buildPages(lesson);
+  if(pageIdx >= pages.length) pageIdx = pages.length - 1;
+  if(pageIdx < 0) pageIdx = 0;
+  const idxs = pages[pageIdx] || [];
+  let html = pagerHTML(pages);
+  idxs.forEach(i=>{
+    const b = lesson.blocks[i];
     const bid = "b" + i;
     const bk = lk + "/" + bid;
     const nCount = (notes[bk]||[]).length;
@@ -2687,10 +2865,13 @@ function renderBlocksHTML(course, lesson, lid){
       case "h":
         html += `<h3 class="b-h">${esc(b.x)}</h3>`; break;
       case "p":
-        html += `<p class="b-p hl-target" data-bk="${bk}">${textWithMarks(b.x, marksFor(bk))}</p>`; break;
-      case "concept":
+        html += `<p class="b-p hl-target" data-bk="${bk}">${mathify(textWithMarks(b.x, marksFor(bk)))}</p>`; break;
+      case "concept": {
+        const detail = CONCEPT_DETAILS[b.title];
         html += `<div class="b-concept"><div class="bc-title">💡 ${esc(b.title)}</div>
-          <div class="bc-body hl-target" data-bk="${bk}">${textWithMarks(b.x, marksFor(bk))}</div></div>`; break;
+          <div class="bc-body hl-target" data-bk="${bk}">${mathify(textWithMarks(b.x, marksFor(bk)))}</div>
+          ${detail ? `<div class="cd-sec"><div class="cd-title">📖 详解</div><div class="cd-body">${mathify(esc(detail))}</div></div>` : ""}</div>`; break;
+      }
       case "code":
         html += `<div class="b-code"><div class="code-bar"><span>${esc(b.lang||"code")}</span>
           <button class="copy-btn" data-code="${encodeURIComponent(b.x)}">复制代码</button></div>
@@ -2698,21 +2879,22 @@ function renderBlocksHTML(course, lesson, lid){
       case "list":
         html += `<ul class="b-list">` + (b.items||[]).map((it,idx)=>{
           const k = bk + "#" + idx;
-          return `<li class="hl-target" data-bk="${k}">${textWithMarks(it, marksFor(k))}</li>`;
+          return `<li class="hl-target" data-bk="${k}">${mathify(textWithMarks(it, marksFor(k)))}</li>`;
         }).join("") + `</ul>`; break;
       case "quiz": {
         const open = lastRevealed.has(bid);
         const tag = b.label ? `📝 ${esc(b.label)}　` : "❓ ";
         const btnTxt = b.label ? (open ? "隐藏解答" : "显示解答") : (open ? "隐藏答案" : "显示答案");
-        html += `<div class="b-quiz"><div class="q">${tag}<span class="hl-target" data-bk="${bk}">${textWithMarks(b.q, marksFor(bk))}</span></div>
+        html += `<div class="b-quiz"><div class="q">${tag}<span class="hl-target" data-bk="${bk}">${mathify(textWithMarks(b.q, marksFor(bk)))}</span></div>
           <button class="reveal-btn" data-qid="${bid}">${btnTxt}</button>
-          <div class="a ${open?"":"hidden"}" id="ans-${bid}">${b.label?"✍ 解答：":"✅ "}${esc(b.a)}</div></div>`; break;
+          <div class="a ${open?"":"hidden"}" id="ans-${bid}">${b.label?"✍ 解答：":"✅ "}${mathify(esc(b.a))}</div></div>`; break;
       }
       default:
         html += `<p class="b-p">${esc(blockText(b))}</p>`;
     }
     html += `<div class="notes hidden" id="notes-${bid}"></div></div>`;
   });
+  html += pagerHTML(pages);
   return html;
 }
 /* 我的补充 */
@@ -2888,6 +3070,7 @@ function refreshPenUI(){
   if(bar) bar.outerHTML = penBarHTML();
   const body = document.getElementById("lessonBody");
   if(body) body.classList.toggle("pen-on", penMode);
+  if((!penMode || penEraser) && penDotEl) penDotEl.style.display = "none";
   sizeCanvas();
 }
 function sizeCanvas(){
@@ -3034,6 +3217,11 @@ document.addEventListener("keydown", e=>{
   if(e.key === "/" && document.activeElement !== searchInput &&
      !/INPUT|TEXTAREA/.test(document.activeElement.tagName)){
     e.preventDefault(); searchInput.focus();
+  }
+  // 分页翻页：内容页里 ← → 键翻页
+  if(currentView === "lesson" && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)){
+    if(e.key === "ArrowRight"){ pageMove(1); }
+    else if(e.key === "ArrowLeft"){ pageMove(-1); }
   }
 });
 document.addEventListener("click", e=>{

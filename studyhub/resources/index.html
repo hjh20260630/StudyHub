@@ -324,12 +324,11 @@
     <p>首页是课程卡片 → 点进课程是<b>思维导图</b>（章节分叉出每一课）→ 点某一课进入<b>内容页</b>，包含知识点、概念、代码和习题。</p>
     <h4>🔍 搜索</h4>
     <p>顶栏搜索框全局搜索，输入关键词后点结果，会直接打开对应课程并<b>定位到那条知识点</b>（黄色闪烁提示）。快捷键：<b>/</b> 聚焦搜索框。</p>
-    <h4>🖍 批注与高亮</h4>
+    <h4>🖍 高亮与画笔</h4>
     <ul>
       <li>鼠标<b>选中一段文字</b> → 点浮出的「🖍 高亮」按钮，即可标黄；点已高亮的文字可取消。</li>
-      <li><b>✏️ 画笔批注</b>：内容页点「画笔」开启后，可像拿笔一样在页面上任意涂画（5 种颜色、粗细可调），支持擦除、撤销、清空，自动保存。画笔开启时页面不可选中文字，关闭后恢复。</li>
-      <li>每个知识块右上角有「✎ 批注」，可添加多条批注，也可删除。</li>
-      <li>每课底部有「<b>我的补充</b>」，可以自己往里面加内容（笔记、心得、易错点）。</li>
+      <li><b>✏️ 画笔批注</b>：内容页点「画笔」开启后，可像拿笔一样在页面上任意涂画（5 种颜色、粗细可调），支持擦除、撤销、清空，自动保存。<b>笔迹按页独立</b>：每一页的画笔只留在那一页。</li>
+      <li>每课底部有「<b>我的补充</b>」，可以自己往里面加内容（笔记、心得、易错点），支持 <b>Ctrl+V 粘贴视频截图</b>；补充内容也是<b>按页独立</b>的。</li>
     </ul>
     <p>⚠️ 以上内容保存在浏览器 localStorage 中，<b>换浏览器或清缓存会丢失</b>。注意：在 WorkBuddy 内置预览里打开时处于沙箱环境，数据只保留到本次预览结束（顶部会有黄条提示）；<b>把文件下载到本地后双击用 Chrome/Edge 打开</b>才会永久保存。重要内容请定期点顶栏「导出我的批注」备份。</p>
     <h4>📖 课程内容怎么加？</h4>
@@ -2546,7 +2545,13 @@ function dbGet(key, def){
 function dbSet(key, val){ rawSet(DB_PREFIX + key, JSON.stringify(val)); }
 let notes = dbGet("notes", {});    // blockKey -> [{id,text,time}]
 let marks = dbGet("marks", {});    // blockKey -> [[start,end],...]
-let extras = dbGet("extras", {});  // lessonKey -> [{id,text,time}]
+let extras = dbGet("extras", {});  // 按「课+页」存储，键为 lk#p页码
+/* 旧版补充数据（整课一份）自动迁移到第 1 页 */
+(function migrateLegacyExtras(){
+  for(const k of Object.keys(extras)){
+    if(k.indexOf("#p") < 0){ extras[k + "#p0"] = extras[k]; delete extras[k]; }
+  }
+})();
 let doneMap = dbGet("done", {});   // lessonKey -> true
 let draws = dbGet("draws", {});    // 画笔笔迹：按「课+页」存储，键为 lk#p页码
 /* 旧版数据（整课一份、不分页）自动迁移到第 1 页 */
@@ -2561,6 +2566,7 @@ let draws = dbGet("draws", {});    // 画笔笔迹：按「课+页」存储，�
  * ================================================================ */
 function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
 function lessonKey(cid, lid){ return cid + "/" + lid; }
+function extrasKey(lk){ return lk + "#p" + pageIdx; }   // 补充内容按页存储
 function findCourse(id){ return COURSE_DATA.find(c => c.id === id); }
 function findLesson(cid, lid){
   const c = findCourse(cid); if(!c) return null;
@@ -2778,7 +2784,6 @@ function drawMap(c){
  * ================================================================ */
 let currentView = "home";
 let currentCourse = null;
-let openNoteBlocks = new Set();  // 当前展开批注区的 block
 let lastRevealed = new Set();    // 已展开答案的题
 let penMode = false, penEraser = false, penColor = "#ef4444", penWidth = 2;
 let curStroke = null, lastPt = null, erasing = false;
@@ -2899,7 +2904,7 @@ function renderLesson(cid, lid, focusBlockId){
     <div class="lessonBody" id="lessonBody">
       ${penBarHTML()}
       <div id="blocks">${renderBlocksHTML(course, lesson, lid)}</div>
-      ${renderExtraHTML(lk)}
+      <div id="extraWrap">${renderExtraHTML(extrasKey(lk))}</div>
       <canvas id="drawCanvas"></canvas>
     </div>
   `;
@@ -2926,9 +2931,7 @@ function renderBlocksHTML(course, lesson, lid){
     const b = lesson.blocks[i];
     const bid = "b" + i;
     const bk = lk + "/" + bid;
-    const nCount = (notes[bk]||[]).length;
-    html += `<div class="block" data-bid="${bid}"><div class="block-actions">
-      <button class="note-btn" data-bk="${bk}" data-bid="${bid}">✎ 批注${nCount?"("+nCount+")":""}</button></div>`;
+    html += `<div class="block" data-bid="${bid}">`;
     switch(b.t){
       case "h":
         html += `<h3 class="b-h">${esc(b.x)}</h3>`; break;
@@ -2970,7 +2973,7 @@ function renderBlocksHTML(course, lesson, lid){
       default:
         html += `<p class="b-p">${esc(blockText(b))}</p>`;
     }
-    html += `<div class="notes hidden" id="notes-${bid}"></div></div>`;
+    html += `</div>`;
   });
   html += pagerHTML(pages);
   return html;
@@ -3013,41 +3016,10 @@ function refreshLesson(lid, keepScroll){
   const wrap = document.getElementById("blocks");
   const st = keepScroll ? window.scrollY : 0;
   wrap.innerHTML = renderBlocksHTML(f.course, f.lesson, lid);
+  const exWrap = document.getElementById("extraWrap");
+  if(exWrap) exWrap.innerHTML = renderExtraHTML(extrasKey(lessonKey(f.course.id, lid)));
   if(keepScroll) window.scrollTo(0, st);
   sizeCanvas();   // 内容高度变了：重测画布并只重绘当前页的笔迹
-}
-
-/* ================================================================
- *  批注
- * ================================================================ */
-function notesListHTML(bk){
-  const arr = notes[bk] || [];
-  return (arr.length ? arr.map(n=>`
-      <div class="note-item">
-        <div>${esc(n.text)}</div>
-        <div class="note-meta">${esc(n.time)}<button class="note-del" data-bk="${bk}" data-nid="${n.id}">删除</button></div>
-      </div>`).join("")
-    : '<div style="font-size:12px;color:var(--ink2)">暂无批注。</div>')
-    + `<div class="note-input-row">
-        <input class="note-input" data-bk="${bk}" placeholder="写下你的批注，回车保存…">
-        <button class="note-add" data-bk="${bk}">添加</button></div>`;
-}
-function addNote(bk, inputEl){
-  const text = inputEl.value.trim();
-  if(!text) return;
-  if(!notes[bk]) notes[bk] = [];
-  notes[bk].push({ id: "n" + Date.now() + Math.random().toString(36).slice(2,6), text, time: nowStr() });
-  dbSet("notes", notes);
-  inputEl.value = "";
-  // 刷新批注按钮上的计数 + 批注列表
-  const bid = inputEl.closest(".notes").id.replace("notes-","");
-  const btn = document.querySelector(`.note-btn[data-bid="${bid}"]`);
-  if(btn){
-    const m = btn.textContent.match(/批注/);
-    btn.textContent = "✎ 批注(" + notes[bk].length + ")";
-  }
-  const listEl = document.getElementById("notes-" + bid);
-  if(listEl) listEl.innerHTML = notesListHTML(bk);
 }
 
 /* ================================================================
@@ -3371,29 +3343,6 @@ function gotoResult(cid, lid, bid){
  * ================================================================ */
 document.getElementById("app").addEventListener("click", e=>{
   const t = e.target;
-  // 批注开关
-  if(t.classList.contains("note-btn")){
-    const bid = t.getAttribute("data-bid"), bk = t.getAttribute("data-bk");
-    const box = document.getElementById("notes-" + bid);
-    if(openNoteBlocks.has(bk)){ openNoteBlocks.delete(bk); box.classList.add("hidden"); }
-    else { openNoteBlocks.add(bk); box.classList.remove("hidden"); box.innerHTML = notesListHTML(bk); }
-    return;
-  }
-  // 添加批注
-  if(t.classList.contains("note-add")){
-    const bk = t.getAttribute("data-bk");
-    const input = t.parentElement.querySelector(".note-input");
-    addNote(bk, input);
-    return;
-  }
-  // 删除批注
-  if(t.classList.contains("note-del")){
-    const bk = t.getAttribute("data-bk"), nid = t.getAttribute("data-nid");
-    if(notes[bk]){ notes[bk] = notes[bk].filter(n=>n.id !== nid); if(!notes[bk].length) delete notes[bk]; dbSet("notes", notes); }
-    const box = t.closest(".notes");
-    box.innerHTML = notesListHTML(bk);
-    return;
-  }
   // 复制代码
   if(t.classList.contains("copy-btn")){
     const code = decodeURIComponent(t.getAttribute("data-code"));
@@ -3449,11 +3398,8 @@ function fallbackCopy(text){
   try{ document.execCommand("copy"); }catch(e){}
   document.body.removeChild(ta);
 }
-// 批注输入框回车 & 补充框快捷键
+// 补充框快捷键
 document.getElementById("app").addEventListener("keydown", e=>{
-  if(e.target.classList && e.target.classList.contains("note-input") && e.key === "Enter"){
-    addNote(e.target.getAttribute("data-bk"), e.target);
-  }
   if(e.target.id === "extraInput" && e.key === "Enter" && e.ctrlKey){
     const f = currentOpenLesson();
     if(f) addExtra(lessonKey(f.course.id, f.lesson.id));
@@ -3530,7 +3476,7 @@ document.addEventListener("paste", e=>{
       reader.onload = ()=>{
         compressImage(reader.result, 900, 0.72, d=>{
           const f = currentOpenLesson();
-          if(f) addExtraImage(lessonKey(f.course.id, f.lesson.id), d);
+          if(f) addExtraImage(extrasKey(lessonKey(f.course.id, f.lesson.id)), d);
         });
       };
       reader.readAsDataURL(blob);

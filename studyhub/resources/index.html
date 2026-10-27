@@ -268,9 +268,10 @@
   /* ===== 公式书面体 ===== */
   .math{
     font-family:"Cambria Math","STIX Two Math","Latin Modern Math","Times New Roman",serif;
-    font-style:italic; font-size:1.12em; letter-spacing:.02em;
+    font-style:normal; font-size:1.12em; letter-spacing:.02em;
   }
-  .math .up{font-style:normal; letter-spacing:.03em;}
+  .math i{font-style:italic;}   /* 变量斜体 */
+  .math .up{font-style:normal; letter-spacing:.03em;}   /* 函数名正体 */
   .math sup, .math sub{font-style:normal; font-size:.72em;}
   @media (max-width:640px){ .main{padding:18px 12px 60px;} }
 </style>
@@ -2577,20 +2578,29 @@ function mathify(escapedHtml){
   // 拆出 <mark> 标签，只对纯文本片段做公式识别
   return escapedHtml.split(/(<mark[^>]*>|<\/mark>)/).map(seg=>{
     if(!seg || seg.startsWith("<mark")) return seg;
-    // 公式候选片段：连续的 ASCII/数学符号（中文会自然截断片段）
-    return seg.replace(/[\x21-\x7E√∑∫∇∆∞→←↔∈≤≥≠≈±·×÷μαβγδθλφψωΩΠΣΦΩ]{2,}/g, run=>{
+    // 公式候选片段：连续的 ASCII/数学符号（含空格、数学减号−、希腊字母、上下标等，中文自然截断）
+    return seg.replace(/[\x20\x21-\x7E\u00B0\u00B2\u00B3\u00B9\u2070-\u209F\u2032\u2033\u2190-\u21FF\u2206\u2207\u2208\u220F\u2212\u2213\u221A\u221E\u2260\u2264\u2265\u2248\u00B1\u00B7\u00D7\u00F7\u0391-\u03C9]{2,}/g, run=>{
       // 至少含一个公式特征符才认定为公式，普通英文单词原样保留
-      if(!/[=^_√∑∫≤≥≠≈→←∈|]/.test(run)) return run;
+      if(!/[=^_√∑∫∇∆∏≤≥≠≈→←↔∈∋⇒⇔↦∀∃|−·×÷′']/.test(run)) return run;
       const lead = run.match(/^\s*/)[0], trail = run.match(/\s*$/)[0];
       let r = run.trim();
+      if(!r) return run;
       // 上标：x^{n+1} 或 x^2
       r = r.replace(/\^\{([^{}]+)\}/g, '<sup>$1</sup>');
       r = r.replace(/\^([A-Za-z0-9])/g, '<sup>$1</sup>');
       // 下标：a_{n+1} 或 a_1
       r = r.replace(/_\{([^{}]+)\}/g, '<sub>$1</sub>');
       r = r.replace(/_([A-Za-z0-9])/g, '<sub>$1</sub>');
-      // 函数名/极限号用正体（书面规范）
-      r = r.replace(/\b(lim|sin|cos|tan|cot|sec|csc|log|ln|max|min|arcsin|arccos|arctan|sup|inf)\b/g, '<span class="up">$1</span>');
+      // 后续所有替换用占位符保护已生成的标签与 HTML 实体，避免二次处理
+      const tags = [];
+      r = r.replace(/(<[^>]+>|&[a-zA-Z]+;|&#[0-9]+;)/g, m=>{ tags.push(m); return "\x00" + (tags.length-1) + "\x00"; });
+      // 函数名/极限号正体（书面规范）
+      r = r.replace(/\b(lim|sin|cos|tan|cot|sec|csc|log|ln|max|min|arcsin|arccos|arctan|sup|inf)\b/g, m=>{ tags.push('<span class="up">'+m+'</span>'); return "\x00" + (tags.length-1) + "\x00"; });
+      // 编程/英文常用词也保持正体（防止代码型文本被整段斜体）
+      r = r.replace(/\b(int|float|double|char|scanf|printf|include|define|else|for|while|return|break|continue|struct|const|void|main|long|short|unsigned|switch|case|default)\b/g, m=>{ tags.push('<span class="up">'+m+'</span>'); return "\x00" + (tags.length-1) + "\x00"; });
+      // 字母（变量）斜体，数字与符号保持正体
+      r = r.replace(/[A-Za-z]+/g, m=>"<i>"+m+"</i>");
+      r = r.replace(/\x00(\d+)\x00/g, (_,n)=>tags[+n]);
       return lead + '<span class="math">' + r + '</span>' + trail;
     });
   }).join("");

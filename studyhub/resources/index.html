@@ -3569,15 +3569,18 @@ const isDesktopNow = () => typeof Neutralino !== "undefined" && !!(Neutralino.os
       const dir = base + '/StudyHub';
       diskDataPath = dir + '/data.json';
       dbgLog("  目标文件: " + diskDataPath);
-      // 单实例锁：60 秒内有心跳说明已有实例在运行，本次直接退出（防双开互踩存储）
+      // 单实例锁：默认让位给已运行实例（最多等 10 秒），超时接管，保证应用总能打开
       try{
         const lockPath = dir + '/.lock';
         let fresh = false;
         try{ const lt = parseInt((await Neutralino.filesystem.readFile(lockPath)) || '0', 10); fresh = lt && (Date.now() - lt) < 60000; }catch(e5){}
         if(fresh){
-          dbgLog("  已有实例在运行，退出本次启动");
-          try{ await Neutralino.app.exit(); }catch(e6){}
-          return;
+          dbgLog("  检测到已有实例，等待其退出（最多10秒）…");
+          for(let w = 0; w < 20 && fresh; w++){
+            await new Promise(r=>setTimeout(r, 500));
+            try{ const lt = parseInt((await Neutralino.filesystem.readFile(lockPath)) || '0', 10); fresh = lt && (Date.now() - lt) < 60000; }catch(e6){ fresh = false; }
+          }
+          dbgLog(fresh ? "  等待超时，接管锁继续启动" : "  旧实例已退出");
         }
         await Neutralino.filesystem.writeFile(lockPath, String(Date.now()));
         setInterval(async ()=>{ try{ await Neutralino.filesystem.writeFile(lockPath, String(Date.now())); }catch(e){} }, 20000);
